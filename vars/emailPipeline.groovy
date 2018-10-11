@@ -8,7 +8,7 @@ def call()
         def fromVar = 'Jenkins'
         def mimeTypeVar = 'text/html'
 
-        emailExt(
+        emailext(
         subject:subjectVar,
         to:toVar,
         body:bodyVar,
