@@ -9,10 +9,10 @@ node{
    }
       
    //Configure and publish to artifactory
-   stage('Artifactory deployment')
-   {
-       deployment.artifactoryDeploy()
-   }
+  // stage('Artifactory deployment')
+ //  {
+ //      deployment.artifactoryDeploy()
+ //  }
    
    //Send email 
    stage('send email')
