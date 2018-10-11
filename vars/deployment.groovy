@@ -19,19 +19,20 @@ def artifactoryDeploy()
     def projectBuildInfo=mavenBuild.run pom: pomFilename , goals: goalsVal
     server.publishBuildInfo projectBuildInfo
 }
+
 def sendEmail()
 {
 	 def subjectVar = 'Jenkins deployment to Artifactory'
-        def toVar = 'mgchow5007@gmail.com'
-        def bodyVar = 'The artifacts have been published'
-        def fromVar = 'Jenkins'
-        def mimeTypeVar = 'text/html'
+     def toVar = 'mgchow5007@gmail.com'
+     def bodyVar = 'The artifacts have been published'
+     def fromVar = 'Jenkins'
+     def mimeTypeVar = 'text/html'
 
-        emailext(
+     emailext(
         subject:subjectVar,
         to:toVar,
         body:bodyVar,
         from:fromVar,
         mimeType:mimeTypeVar
-        )
+     )
 }
