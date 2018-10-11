@@ -1,4 +1,4 @@
-@Library('emailPipeline')
+@Library('emailPipeline') _
 //,'artifactoryDeploy')
 node{
 
