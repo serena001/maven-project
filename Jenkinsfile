@@ -18,12 +18,12 @@ node{
     def pomFilename = 'pom.xml'
     def goalsVal ='clean install'
     
-		try{
+		//try{
        		deployment.artifactoryDeploy(releaseLibRes,snapshotLibRes, releaseLibDep, snapshotLibDep,pomFilename,goalsVal)
- 		catch(exception)
- 		{
- 			echo "Artifactory deployment process failed."
- 		}
+ 		//catch(exception)
+ 		//{
+ 		//	echo "Artifactory deployment process failed."
+ 		//}
 	}
    
    //Send email 
@@ -35,12 +35,12 @@ node{
      def fromVar = 'Jenkins'
      def mimeTypeVar = 'text/html'
      
-   	   try{
+   	  // try{
        		deployment.sendEmail(subjectVar,toVar,bodyVar,fromVar,mimeTypeVar)
-       }
-       catch(exception)
-       {
-       		echo "Failed to send an email concerning Artifactory deployment"
-       }
+      // }
+      // catch(exception)
+      // {
+      // 		echo "Failed to send an email concerning Artifactory deployment"
+      // }
    }
 }
