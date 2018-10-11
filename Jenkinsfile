@@ -16,7 +16,7 @@ node{
    stage('send email')
    {
        //emailPipeline
-       artifactoryDeploy
+       artifactoryDeploy.call()
        echo "sdffd"
    }
 }
