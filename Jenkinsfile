@@ -1,4 +1,4 @@
-@Library('emailPipeline') _
+@Library('artifactoryDeploy') _
 //,'artifactoryDeploy')
 node{
 
@@ -15,7 +15,8 @@ node{
     //Send email 
    stage('send email')
    {
-       emailPipeline
+       //emailPipeline
+       artifactoryDeploy
        echo "sdffd"
    }
 }
