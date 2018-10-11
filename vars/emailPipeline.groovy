@@ -2,6 +2,7 @@
 def call()
 {
         echo "here I am"
+        println "sssss"
         def subjectVar = 'Jenkins deployment to Artifactory'
         def toVar = 'mgchow5007@gmail.com'
         def bodyVar = 'The artifacts have been published'
