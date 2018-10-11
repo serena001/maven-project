@@ -20,7 +20,7 @@ node{
     
 		try{
        		deployment.artifactoryDeploy(releaseLibRes,snapshotLibRes, releaseLibDep, snapshotLibDep,pomFilename,goalsVal)
- 		catch(Exception e)
+ 		catch(exception)
  		{
  			echo "Artifactory deployment process failed."
  		}
@@ -38,7 +38,7 @@ node{
    	   try{
        		deployment.sendEmail(subjectVar,toVar,bodyVar,fromVar,mimeTypeVar)
        }
-       catch(Exception e)
+       catch(exception)
        {
        		echo "Failed to send an email concerning Artifactory deployment"
        }
