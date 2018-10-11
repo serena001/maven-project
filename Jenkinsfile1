@@ -1,0 +1,49 @@
+@Library('emailPipeline')
+node{
+
+    def artfactoryServer = Artifactory.server("artifactory")
+    def mavenBuild =Artifactory.newMavenBuild()
+    env.MAVEN_HOME = "${tool 'maven'}"
+
+    def releaseLibRes = 'libs-release'
+    def snapshotLibRes = 'libs-snapshot'
+
+    def releaseLibDep = 'libs-release-local'
+    def snapshotLibDep = 'libs-snapshot-snapshot-local'
+
+    def pomFilename = 'pom.xml'
+    def goalsVal ='clean install'
+
+
+    //Checkout the project code from the repository
+   stage('Git Repository')
+   {
+       checkout scm
+   }
+
+    //Configure Artifactory
+    //Setup the location where dependencies will be retrieved
+    //Setup the location where build artifacts will be deployed 
+   stage('configure artifactory')
+   {
+       mavenBuild.resolver server: artfactoryServer, releaseRepo: releaseLibRes, snapshotRepo: snapshotLibRes
+       mavenBuild.deployer server: artfactoryServer, releaseRepo: releaseLibDep , snapshotRepo: snapshotLibDep
+   }
+
+   //Build the project and then create the project build info
+   stage('build project')
+   {
+       def projectBuildInfo=mavenBuild.run pom: pomFilename , goals: goalsVal
+   }
+
+   //Publish the project build info 
+   stage('publish to artifactory')
+   {
+       server.publishBuildInfo projectBuildInfo
+   }
+
+   stage('send email')
+   {
+       emailPipeline
+   }
+}
