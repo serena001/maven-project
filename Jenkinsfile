@@ -16,5 +16,6 @@ node{
    stage('send email')
    {
        emailPipeline
+       echo "sdffd"
    }
 }
