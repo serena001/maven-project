@@ -9,7 +9,7 @@ node{
    }
       
    //Configure and publish to artifactory
-   stage('Artifactory deployment')
+ /**  stage('Artifactory deployment')
    {
    	def releaseLibRes = 'libs-release'
     def snapshotLibRes = 'libs-snapshot'
@@ -24,7 +24,7 @@ node{
  		//{
  		//	echo "Artifactory deployment process failed."
  		//}
-	}
+	}**/
    
    //Send email 
    stage('send email')
