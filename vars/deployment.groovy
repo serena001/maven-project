@@ -13,12 +13,6 @@ def artifactoryDeploy(def releaseLibRes, def snapshotLibRes, def releaseLibDep, 
 
 def sendEmail(def subjectVar, def toVar, def bodyVar, def fromVar, def mimeTypeVar)
 {
-	 //def subjectVar = 'Jenkins deployment to Artifactory'
-     //def toVar = 'mgchow5007@gmail.com'
-     //def bodyVar = 'The artifacts have been published'
-     //def fromVar = 'Jenkins'
-     //def mimeTypeVar = 'text/html'
-
      emailext(
         subject:subjectVar,
         to:toVar,

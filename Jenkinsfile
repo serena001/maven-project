@@ -9,7 +9,7 @@ node{
    }
       
    //Configure and publish to artifactory
- /**  stage('Artifactory deployment')
+   stage('Artifactory deployment')
    {
    	def releaseLibRes = 'libs-release'
     def snapshotLibRes = 'libs-snapshot'
@@ -20,17 +20,17 @@ node{
     
 		//try{
        		deployment.artifactoryDeploy(releaseLibRes,snapshotLibRes, releaseLibDep, snapshotLibDep,pomFilename,goalsVal)
- 		//catch(exception)
+ 		//catch(Exception e)
  		//{
  		//	echo "Artifactory deployment process failed."
  		//}
-	}**/
+	}
    
    //Send email 
    stage('send email')
    {
      def subjectVar = 'Jenkins deployment to Artifactory'
-     def toVar = 'mgchow5007@gmail.com'
+     def toVar = 'testing@gmail.com'
      def bodyVar = 'The artifacts have been published'
      def fromVar = 'Jenkins'
      def mimeTypeVar = 'text/html'
@@ -38,7 +38,7 @@ node{
    	  // try{
        		deployment.sendEmail(subjectVar,toVar,bodyVar,fromVar,mimeTypeVar)
       // }
-      // catch(exception)
+      // catch(Exception e)
       // {
       // 		echo "Failed to send an email concerning Artifactory deployment"
       // }
