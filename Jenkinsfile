@@ -1,7 +1,7 @@
 @Library('deployment') _
 
 node{
-def emailVars = load "./emailVar.groovy"
+def emailVars = load "./emailVariables.groovy"
 
     //Checkout the project code from the repository
    stage('Git Repository')
