@@ -1,6 +1,7 @@
 @Library('deployment') _
 
 node{
+def emailVars = load "./emailVar.groovy"
 
     //Checkout the project code from the repository
    stage('Git Repository')
@@ -11,12 +12,12 @@ node{
    //Configure and publish to artifactory
    stage('Artifactory deployment')
    {
-   	def releaseLibRes = 'libs-release'
-    def snapshotLibRes = 'libs-snapshot'
-    def releaseLibDep = 'libs-release-local'
-    def snapshotLibDep = 'libs-snapshot-snapshot-local'
-    def pomFilename = 'pom.xml'
-    def goalsVal ='clean install'
+   	def releaseLibRes = emailVars.releaseLibRes
+    def snapshotLibRes = emailVars.snapshotLibRes
+    def releaseLibDep = emailVars.releaseLibDep
+    def snapshotLibDep = emailVars.snapshotLibDep
+    def pomFilename = emailVars.pomFilename
+    def goalsVal = emailVars.goalsVal
     
 		//try{
        		deployment.artifactoryDeploy(releaseLibRes,snapshotLibRes, releaseLibDep, snapshotLibDep,pomFilename,goalsVal)
