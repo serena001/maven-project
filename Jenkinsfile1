@@ -30,15 +30,10 @@ node{
        mavenBuild.deployer server: artfactoryServer, releaseRepo: releaseLibDep , snapshotRepo: snapshotLibDep
    }
 
-   //Build the project and then create the project build info
+   //Build the project,  create and publish the project build info
    stage('build project')
    {
        def projectBuildInfo=mavenBuild.run pom: pomFilename , goals: goalsVal
-   }
-
-   //Publish the project build info 
-   stage('publish to artifactory')
-   {
        artfactoryServer.publishBuildInfo projectBuildInfo
    }
 
