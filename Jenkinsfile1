@@ -1,4 +1,4 @@
-@Library('emailPipeline')
+//@Library('emailPipeline')
 node{  
 
     def artfactoryServer = Artifactory.server("artifactory")
