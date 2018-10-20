@@ -1,6 +1,6 @@
 //@Library('emailPipeline')
 properties([
-   pipelineTriggers([pollScm('*/10 * * * *')]),
+   pipelineTriggers([pollSCM('*/10 * * * *')]),
    disableConcurrentBuilds()
 ])
 node{  
