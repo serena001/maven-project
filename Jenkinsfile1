@@ -9,7 +9,7 @@ node{
     def snapshotLibRes = 'libs-snapshot'
 
     def releaseLibDep = 'libs-release-local'
-    def snapshotLibDep = 'libs-snapshot-snapshot-local'
+    def snapshotLibDep = 'libs-snapshot-local'
 
     def pomFilename = 'pom.xml'
     def goalsVal ='clean install'
@@ -44,6 +44,6 @@ node{
 
    stage('send email')
    {
-       emailPipeline
+      // emailPipeline
    }
 }
