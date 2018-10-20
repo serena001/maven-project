@@ -39,7 +39,7 @@ node{
    //Publish the project build info 
    stage('publish to artifactory')
    {
-       server.publishBuildInfo projectBuildInfo
+       artfactoryServer.publishBuildInfo projectBuildInfo
    }
 
    stage('send email')
