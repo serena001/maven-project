@@ -1,4 +1,8 @@
 //@Library('emailPipeline')
+properties([
+   pipelineTriggers([pollScm('*/10 * * * *')]),
+   disableConcurrentBuilds()
+])
 node{  
 
     def artfactoryServer = Artifactory.server("artifactory")
