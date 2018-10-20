@@ -51,8 +51,7 @@ node{
         def fromVar = 'Jenkins'
         def mimeTypeVar = 'text/html'
 
-        emailext
-        subject:subjectVar,
+        emailext subject:subjectVar,
         to:toVar,
         body:bodyVar,
         from:fromVar,
