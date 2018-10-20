@@ -1,5 +1,5 @@
 @Library('emailPipeline')
-node{
+node{  
 
     def artfactoryServer = Artifactory.server("artifactory")
     def mavenBuild =Artifactory.newMavenBuild()
