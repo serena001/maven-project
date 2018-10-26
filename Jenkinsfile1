@@ -40,7 +40,23 @@ node{
        def projectBuildInfo=mavenBuild.run pom: pomFilename , goals: goalsVal
        artfactoryServer.publishBuildInfo projectBuildInfo
    }
-
+ stage('promotion')
+   {
+   echo "going going gone"
+   	def promotionConfigs = [ 
+   	'buildName':'45',
+   	'buildNumber':'66',
+   	//'targetRepo':'libs-release-local',
+   		'targetRepo':'libs-staging-local',
+   //	'sourceRepo':'libs-staging-local',
+   'sourceRepo':'libs-release-local',
+   	'status':'Release',
+   	'copy':true,
+   	'failFast':true]
+   	def artifactoryServer = Artifactory.server("artifactory")//deployment.createArtifactoryInstance()
+   	artifactoryServer.promote promotionConfigs
+   	
+   }
    stage('send email')
    {
    
