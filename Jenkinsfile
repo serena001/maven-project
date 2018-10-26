@@ -61,11 +61,14 @@ node{
    }**/
    stage('promotion')
    {
+   echo "going going gone"
    	def promotionConfigs = [ 
    	'buildName':'45',
    	'buildNumber':'66',
-   	'targetRepo':'libs-release-local',
-   	'sourceRepo':'libs-staging-local',
+   	//'targetRepo':'libs-release-local',
+   		'targetRepo':'libs-staging-local',
+   //	'sourceRepo':'libs-staging-local',
+   'sourceRepo':'libs-release-local',
    	'status':'Release',
    	'copy':true,
    	'failFast':true]
