@@ -109,7 +109,7 @@ pipeline{
 			script
 			{
 				//send success email user template
-				deployment.sendEmail(email)
+				//deployment.sendEmail(emailConfig)
 			}		
 		}
 		unstable
@@ -117,7 +117,7 @@ pipeline{
 			script
 			{
 				//send unstable email user template
-				deployment.sendEmail(email)
+				//deployment.sendEmail(emailConfig)
 			}
 		}
 		failure
@@ -125,7 +125,7 @@ pipeline{
 			script
 			{
 				//send failure email user template
-				deployment.sendEmail(email)
+				//deployment.sendEmail(emailConfig)
 			}
 		}
 	}
