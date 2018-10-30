@@ -80,9 +80,9 @@ pipeline{
 				script
 				{
 					//push to git repository
-					def mavenBuild = Artifactory.newMavenBuild()
-					mavenBuild.deployer.deployArtifacts=false
-					mavenBuild.run(pom:'pom.xml',goalsVal:"versions: set -DnewVersion=1.1.1 -DprocessAllModules versions: commit")
+					def mavenBuild1 = Artifactory.newMavenBuild()
+					mavenBuild1.deployer.deployArtifacts=false
+					mavenBuild1.run(pom:'pom.xml',goalsVal:"versions: set -DnewVersion=1.1.1 -DprocessAllModules versions: commit")
 					//deployment.buildMaven(mavenBuild,mavenBuildConfig)
 				}
 			}
