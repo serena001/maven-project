@@ -59,8 +59,8 @@ pipeline{
 					deployment.artifactoryDeploy(artifactoryConfig,artfactoryServer,mavenBuild)
 					
 					//Update the repository in GIT (pom.xml)
-					sh 'git add pom.xml"
-					sh 'git commit -m 'Promoted the build from the staging repository to the release repository''
+					sh 'git add pom.xml'
+					sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
 					sh 'git push origin master'
 					
 					//Promote artifacts from the staging repository to the release repository
