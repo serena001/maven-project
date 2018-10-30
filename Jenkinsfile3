@@ -29,14 +29,14 @@ pipeline{
 			{
 				script
 				{
-					archiveConig = readFile(file:"src/main/resources/archiveConfig.json")
-					artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
+					//archiveConig = readFile(file:"src/main/resources/archiveConfig.json")
+					//artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
 					//emailConfig=readFile(file:"src/main/resources/emailConfig.json")
 					//promotionConfig=readFile(file:"src/main/resources/promotionConfig.json")
 					//artifactoryConfig=readFile(file:"src/main/resources/artifactoryConfig.json")
-					mavenBuild=deployment.createMavenBuildInstance()
-					artfactoryServer=deployment.createArtifactoryInstance(artifactoryConfig)
-					mavenBuildConfig=readFile(file:"src/main/resources/mavenBuildConfig.json")
+					//mavenBuild=deployment.createMavenBuildInstance()
+					//artfactoryServer=deployment.createArtifactoryInstance(artifactoryConfig)
+					//mavenBuildConfig=readFile(file:"src/main/resources/mavenBuildConfig.json")
 				}
 			}
 		}
@@ -80,8 +80,9 @@ pipeline{
 				script
 				{
 					//push to git repository
-					mavevenBuild.deployer.deployArtifacts=false
-					mavenBuild.run(pom:'pom.xml',goalsVal:"versions: set -DnewVersion -DprocessAllModules versions: commit")
+					def mavenBuild = Artifactory.newMavenBuild()
+					mavenBuild.deployer.deployArtifacts=false
+					mavenBuild.run(pom:'pom.xml',goalsVal:"versions: set -DnewVersion=1.1.1 -DprocessAllModules versions: commit")
 					//deployment.buildMaven(mavenBuild,mavenBuildConfig)
 				}
 			}**/
