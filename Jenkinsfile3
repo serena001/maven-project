@@ -53,7 +53,7 @@ pipeline{
 			}
 			when{
 				expression{params.CHOICE=='yes'}
-			}**/
+			}
 			steps
 			{
 				//echo "${params.CHOICE}"
@@ -70,10 +70,10 @@ pipeline{
 					//Promote artifacts from the staging repository to the release repository
 				//	deployment.artifactoryPromote(promotionConfig, artfactoryServer)
 				}
-			}
-		/**	when{
+			}**/
+			/**when{
 				expression{params.CHOICE=='no'}
-			}
+			}**/
 			steps
 			{
 				//echo "${params.CHOICE}"
@@ -85,7 +85,7 @@ pipeline{
 					mavenBuild.run(pom:'pom.xml',goalsVal:"versions: set -DnewVersion=1.1.1 -DprocessAllModules versions: commit")
 					//deployment.buildMaven(mavenBuild,mavenBuildConfig)
 				}
-			}**/
+			}
 		}
 		stage('archive')
 		{
