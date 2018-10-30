@@ -1,6 +1,6 @@
 {
 	"buildName":"45",
-	"buildNum":"55",
+	"buildNumber":"55",
 	"targetRepo":"libs-release-local",
 	"sourceRepo":"libs-staging-local",
 	"status":"Released",
