@@ -25,15 +25,18 @@ pipeline{
 	{
 		stage('Setup Configuration parameters to be used by the pipeline')
 		{
-			script
+			steps
 			{
-				archiveConig = readFile(file:"src/main/resources/archiveConfig.json")
-				artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
-				emailConfig=readFile(file:"src/main/resources/emailConfig.json")
-				promotionConfig=readFile(file:"src/main/resources/promotionConfig.json")
-				artifactoryConfig=readFile(file:"src/main/resources/artifactoryConfig.json")
-				mavenBuild=readFile(file:"src/main/resources/mavenBuild.json")
-				artfactoryServer=readFile(file:"src/main/resources/artfactoryServer.json")
+				script
+				{
+					archiveConig = readFile(file:"src/main/resources/archiveConfig.json")
+					artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
+					emailConfig=readFile(file:"src/main/resources/emailConfig.json")
+					promotionConfig=readFile(file:"src/main/resources/promotionConfig.json")
+					artifactoryConfig=readFile(file:"src/main/resources/artifactoryConfig.json")
+					mavenBuild=readFile(file:"src/main/resources/mavenBuild.json")
+					artfactoryServer=readFile(file:"src/main/resources/artfactoryServer.json")
+				}
 			}
 		}
 		stage('promotion')
@@ -84,13 +87,16 @@ pipeline{
 		}
 		stage('archive')
 		{
-			script
+			steps
 			{
-				steps
+				script
 				{
-					script
+					steps
 					{
-						deployment.archiveArtifact(archiveConfig)
+						script
+						{
+							deployment.archiveArtifact(archiveConfig)
+						}
 					}
 				}
 			}
