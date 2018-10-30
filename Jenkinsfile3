@@ -23,7 +23,7 @@ pipeline{
 	}
 	stages
 	{
-		stage('Setup Configuration parameters to be used by the pipeline')
+		/**stage('Setup Configuration parameters to be used by the pipeline')
 		{
 			steps
 			{
@@ -39,7 +39,7 @@ pipeline{
 					//mavenBuildConfig=readFile(file:"src/main/resources/mavenBuildConfig.json")
 				}
 			}
-		}
+		}**/
 		stage('promotion')
 		{
 			input
