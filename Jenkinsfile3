@@ -53,7 +53,7 @@ pipeline{
 			}
 			when{
 				expression{params.CHOICE=='yes'}
-			}
+			}**/
 			steps
 			{
 				//echo "${params.CHOICE}"
@@ -70,7 +70,7 @@ pipeline{
 					//Promote artifacts from the staging repository to the release repository
 				//	deployment.artifactoryPromote(promotionConfig, artfactoryServer)
 				}
-			}**/
+			}
 			/**when{
 				expression{params.CHOICE=='no'}
 			}**/
