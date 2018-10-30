@@ -71,9 +71,9 @@ pipeline{
 				//	deployment.artifactoryPromote(promotionConfig, artfactoryServer)
 				}
 			}
-			/**when{
+			/**  THIS IS WORKING when{
 				expression{params.CHOICE=='no'}
-			}**/
+			}
 			steps
 			{
 				//echo "${params.CHOICE}"
@@ -86,7 +86,7 @@ pipeline{
 					mavenBuild1.run(pom:'pom.xml',goals:goals)
 					//deployment.buildMaven(mavenBuild,mavenBuildConfig)
 				}
-			}
+			}**/
 		}
 		stage('archive')
 		{
