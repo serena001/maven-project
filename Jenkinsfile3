@@ -34,8 +34,9 @@ pipeline{
 					emailConfig=readFile(file:"src/main/resources/emailConfig.json")
 					promotionConfig=readFile(file:"src/main/resources/promotionConfig.json")
 					artifactoryConfig=readFile(file:"src/main/resources/artifactoryConfig.json")
-					mavenBuild=readFile(file:"src/main/resources/mavenBuild.json")
-					artfactoryServer=readFile(file:"src/main/resources/artfactoryServer.json")
+					mavenBuild=deployment.createMavenBuildInstance()
+					artfactoryServer=deployment.createArtifactoryInstance(artifactoryConfig)
+					mavenBuildConfig=readFile(file:"src/main/resources/mavenBuildConfig.json")
 				}
 			}
 		}
@@ -81,7 +82,7 @@ pipeline{
 					//push to git repository
 					mavevenBuild.deployer.deployArtifacts=false
 					mavenBuild.run(pom:'pom.xml',goalsVal:"versions: set -DnewVersion -DprocessAllModules versions: commit")
-					//deployment.buildProject(mavenBuild,artifactoryDeploy)
+					//deployment.buildMaven(mavenBuild,mavenBuildConfig)
 				}
 			}**/
 		}

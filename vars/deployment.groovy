@@ -2,13 +2,13 @@
 
 import groovy.json.JsonSlurperClassic
 
-def artifactoryDeploy(artifactroyDeploy)
+def artifactoryDeploy(artifactoryPublishConfig,artfactoryServer,mavenBuild,mavenBuildConfig)
 {
-	def artifactoryServer = Artifactory.server("artifactory")
-	def mavenBuild = Artifactory.newMavenBuild()
+	//def artifactoryServer = Artifactory.server("artifactory")
+	//def mavenBuild = Artifactory.newMavenBuild()
 	env.MAVEN_HOME = "${tool 'maven'}"
 	
-	def artifactoryDeployMap = new JsonSlurperClassic().parseTest(artifactoryDeploy)
+	def artifactoryDeployMap = new JsonSlurperClassic().parseTest(artifactoryPublishConfig)
 	
 	def releaseLibRes = artifactoryDeployMap.releaseLibRes
 	def snapshotRepo = artifactoryDeployMap.snapshotRepo
@@ -18,22 +18,35 @@ def artifactoryDeploy(artifactroyDeploy)
 	def pomFilename = artifactoryDeployMap.pomFilename
 	def goalsVal = artifactoryDeployMap.goalsVal
 	
-	//mavenBuild.resolver server: artifactoryServer, releaseRepo: releaseLibRes, snapshotRepo: snapshotLibRes
-	mavenBuild.deployer server: artifactoryServer, releaseRepo: releaseLibDep, snapshotRepo: snapshotLibDep
-	def projectBuildInfo=mavenBuild.run pom: pomFilename, goals:goalsVal
-	artifactoryServer.publishBuildInfo projectBuildInfo	
+	//mavenBuild.resolver server: artfactoryServer, releaseRepo: releaseLibRes, snapshotRepo: snapshotLibRes
+	mavenBuild.deployer server: artfactoryServer, releaseRepo: releaseLibDep, snapshotRepo: snapshotLibDep
+	def projectBuildInfo=mavenBuild.buildMaven(mavenBuild,mavenBuildConfig)
+	artfactoryServer.publishBuildInfo projectBuildInfo	
 }
 
-def archiveArtifact(archive)
+def createMavenBuildInstance()
 {
-	def archiveMap = new JsonSlurperClassic().parseText(archive)
+   def mavenBuild = Artifactory.newMavenBuild()
+   return mavenBuild
+}
+
+def createArtifactoryInstance(artifactoryConfig)
+{
+	def artifactoryDeployMap = new JsonSlurperClassic().parseTest(artifactoryConfig)
+	def artifactoryServer = Artifactory.server(artifactoryDeployMap.name)
+	return artifactoryServer
+}
+
+def archiveArtifact(archiveConfig)
+{
+	def archiveMap = new JsonSlurperClassic().parseText(archiveConfig)
 	def archiveSrc = archiveMap.archiveSrc
 	archiveArtifacts artifacts: archiveSrc, fingerprint: true, OnlyIfSuccessful:true
 }
 
-def sendEmail(email)
+def sendEmail(emailConfig)
 {
-	def emailMap = new JsonSlurperClassic().parseText(email)
+	def emailMap = new JsonSlurperClassic().parseText(emailConfig)
 	def subject = emailMap.subject
 	def to = emailMap.to
 	def body = emailMap.body
@@ -48,9 +61,9 @@ def sendEmail(email)
 		mimeType:mimeType
 		)
 }
-def deploymentEnvironmentMaven()
+def buildMaven(mavenBuild,mavenBuildConfig)
 {
-	def mavenBuild = Artifactory.newMavenBuild()
+	def mavenBuildMap = new JsonSlurperClassic().parseText(mavenBuildConfig)
 	env.MAVEN_HOME = "${tool 'maven'}"
-	def projectBuildInfo=mavenBuild.run pom: pomFilename, goals:goalsVal
+	def projectBuildInfo=mavenBuild.run pom: mavenBuildMap.pomFilename, goals:mavenBuildMap.goalsVal
 }
