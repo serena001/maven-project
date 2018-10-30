@@ -42,7 +42,7 @@ pipeline{
 		}**/
 		stage('promotion')
 		{
-			input
+		/**	input
 			{
 				message "Do you want to promote this?"
 				ok "OK"
@@ -53,10 +53,10 @@ pipeline{
 			}
 			when{
 				expression{params.CHOICE=='yes'}
-			}
+			}**/
 			steps
 			{
-				echo "${params.CHOICE}"
+				//echo "${params.CHOICE}"
 				script
 				{
 					//Deploy artifacts to the staging and snapshot repositories
@@ -76,7 +76,7 @@ pipeline{
 			}
 			steps
 			{
-				echo "${params.CHOICE}"
+				//echo "${params.CHOICE}"
 				script
 				{
 					//push to git repository
@@ -93,13 +93,7 @@ pipeline{
 			{
 				script
 				{
-					steps
-					{
-						script
-						{
-							deployment.archiveArtifact(archiveConfig)
-						}
-					}
+					deployment.archiveArtifact(archiveConfig)
 				}
 			}
 		}
