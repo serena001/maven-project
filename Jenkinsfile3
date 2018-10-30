@@ -70,7 +70,7 @@ pipeline{
 					deployment.artifactoryPromote(promotionConfig, artfactoryServer)
 				}
 			}
-			when{
+		/**	when{
 				expression{params.CHOICE=='no'}
 			}
 			steps
@@ -83,7 +83,7 @@ pipeline{
 					mavenBuild.run(pom:'pom.xml',goalsVal:"versions: set -DnewVersion -DprocessAllModules versions: commit")
 					//deployment.buildProject(mavenBuild,artifactoryDeploy)
 				}
-			}
+			}**/
 		}
 		stage('archive')
 		{
