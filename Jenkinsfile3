@@ -59,7 +59,7 @@ pipeline{
 				script
 				{
 					//Deploy artifacts to the staging and snapshot repositories
-					deployment.artifactoryDeploy(artifactoryConfig,artfactoryServer,mavenBuild)
+				//	deployment.artifactoryDeploy(artifactoryConfig,artfactoryServer,mavenBuild)
 					
 					//Update the repository in GIT (pom.xml)
 					sh 'git add pom.xml'
@@ -67,7 +67,7 @@ pipeline{
 					sh 'git push origin master'
 					
 					//Promote artifacts from the staging repository to the release repository
-					deployment.artifactoryPromote(promotionConfig, artfactoryServer)
+				//	deployment.artifactoryPromote(promotionConfig, artfactoryServer)
 				}
 			}
 		/**	when{
