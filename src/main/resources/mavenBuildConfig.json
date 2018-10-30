@@ -1,0 +1,4 @@
+{
+	"pomFilename":"pom.xml",
+	"goalsVal":"clean install"
+}

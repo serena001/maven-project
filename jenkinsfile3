@@ -1,0 +1,126 @@
+@Library('deployment') _
+def archiveConfig;
+def artifactoryPublishConfig;
+def emailConfig;
+def promotionConfig;
+def artifactoryConfig;
+def mavenBuild;
+def artifactoryServer;
+
+pipeline{
+	agent any
+	tools
+	{
+		maven 'maven'		
+	}
+	triggers
+	{
+		cron('H */4 * * 1-5')
+	}
+	options
+	{
+		disableConcurrentBuilds()
+	}
+	stages
+	{
+		stage('Setup Configuration parameters to be used by the pipeline')
+		{
+			script
+			{
+				archiveConig = readFile(file:"src/main/resources/archiveConfig.json")
+				artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
+				emailConfig=readFile(file:"src/main/resources/emailConfig.json")
+				promotionConfig=readFile(file:"src/main/resources/promotionConfig.json")
+				artifactoryConfig=readFile(file:"src/main/resources/artifactoryConfig.json")
+				mavenBuild=readFile(file:"src/main/resources/mavenBuild.json")
+				artfactoryServer=readFile(file:"src/main/resources/artfactoryServer.json")
+			}
+		}
+		stage('promotion')
+		{
+			input
+			{
+				message "Do you want to promote this?"
+				ok "OK"
+				parameters
+				{
+					choice(name:'CHOICE',choices:['yes','no'],description:'')
+				}
+			}
+			when{
+				expression{params.CHOICE=='yes'}
+			}
+			steps
+			{
+				echo "${params.CHOICE}"
+				script
+				{
+					//Deploy artifacts to the staging and snapshot repositories
+					deployment.artifactoryDeploy(artifactoryConfig,artfactoryServer,mavenBuild)
+					
+					//Update the repository in GIT (pom.xml)
+					sh 'git add pom.xml"
+					sh 'git commit -m 'Promoted the build from the staging repository to the release repository''
+					sh 'git push origin master'
+					
+					//Promote artifacts from the staging repository to the release repository
+					deployment.artifactoryPromote(promotionConfig, artfactoryServer)
+				}
+			}
+			when{
+				expression{params.CHOICE=='no'}
+			}
+			steps
+			{
+				echo "${params.CHOICE}"
+				script
+				{
+					//push to git repository
+					mavevenBuild.deployer.deployArtifacts=false
+					mavenBuild.run(pom:'pom.xml',goalsVal:"versions: set -DnewVersion -DprocessAllModules versions: commit")
+					//deployment.buildProject(mavenBuild,artifactoryDeploy)
+				}
+			}
+		}
+		stage('archive')
+		{
+			script
+			{
+				steps
+				{
+					script
+					{
+						deployment.archiveArtifact(archiveConfig)
+					}
+				}
+			}
+		}
+	}
+	post
+	{
+		always
+		{
+			script
+			{
+				//send success email user template
+				deployment.sendEmail(email)
+			}		
+		}
+		unstable
+		{
+			script
+			{
+				//send unstable email user template
+				deployment.sendEmail(email)
+			}
+		}
+		failure
+		{
+			script
+			{
+				//send failure email user template
+				deployment.sendEmail(email)
+			}
+		}
+	}
+	

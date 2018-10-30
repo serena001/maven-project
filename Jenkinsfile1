@@ -52,8 +52,6 @@ node{
    'sourceRepo':'libs-release-local',
    	'status':'Release',
    	'copy':true,
-   	'dryRun' : false,
-
    	'failFast':true]
    	def artifactoryServer = Artifactory.server("artifactory")//deployment.createArtifactoryInstance()
    	artifactoryServer.promote promotionConfigs
