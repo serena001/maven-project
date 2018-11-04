@@ -2,11 +2,10 @@
 
 import groovy.json.JsonSlurperClassic
 
-def artifactoryDeployResolveConfig(artifactoryPublishConfig,mavenBuildConfig)
+def artifactoryDeployResolveConfig(artifactoryPublishConfig,mavenBuild)
 {
 	env.MAVEN_HOME = "${tool 'maven'}"	
 //	def artifactoryConfigMap = new JsonSlurperClassic().parseTest(artifactoryPublishConfig)
-	def mavenBuildMap = new JsonSlurperClassic().parseText(mavenBuildConfig)	
 
     def releaseLibRes = 'libs-release'
     def snapshotLibRes = 'libs-snapshot'
