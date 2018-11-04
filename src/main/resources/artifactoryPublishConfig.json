@@ -1,7 +1,7 @@
 {
 	"releaseLibRes":"libs-release",
 	"snapshotLibRes":"libs-snapshot",
-	"releaseLibDep":"libs-release-local",
+	"releaseLibDep":"libs-staging-local",
 	"snapshotLibDep":"libs-snapshot-local",
 	"deployArtifacts":true
 	
