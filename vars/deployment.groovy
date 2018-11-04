@@ -7,8 +7,19 @@ def artifactoryDeployResolveConfig(artifactoryPublishConfig,mavenBuild)
 	env.MAVEN_HOME = "${tool 'maven'}"	
 	def artifactoryConfigMap = new JsonSlurperClassic().parseTest(artifactoryPublishConfig)
 	def mavenBuildMap = new JsonSlurperClassic().parseText(mavenBuildConfig)	
-	mavenBuild.resolver server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibRes, snapshotRepo: artifactoryConfigMap.snapshotLibRes
-	mavenBuild.deployer server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibDep, snapshotRepo: artifactoryConfigMap.snapshotLibDep
+	  def releaseLibRes = artifactoryConfigMap.releaseLibRes
+    def snapshotLibRes = artifactoryConfigMap.snapshotLibRes
+
+    def releaseLibDep = artifactoryConfigMap.releaseLibDep
+    def snapshotLibDep = artifactoryConfigMap.snapshotLibDep
+
+    def pomFilename = 'pom.xml'
+    def goalsVal ='clean install'
+//	mavenBuild.resolver server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibRes, snapshotRepo: artifactoryConfigMap.snapshotLibRes
+//	mavenBuild.deployer server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibDep, snapshotRepo: artifactoryConfigMap.snapshotLibDep
+//	mavenBuild.resolver server: artfactoryServer, releaseRepo: releaseLibRes, snapshotRepo: snapshotLibRes
+//	mavenBuild.deployer server: artfactoryServer, releaseRepo: releaseLibDep, snapshotRepo: snapshotLibDep
+
 	return mavenBuild
 }
 
