@@ -5,21 +5,9 @@ import groovy.json.JsonSlurperClassic
 def artifactoryDeployResolveConfig(artfactoryServer,artifactoryPublishConfig,mavenBuild)
 {
 	env.MAVEN_HOME = "${tool 'maven'}"	
-//	def artifactoryConfigMap = new JsonSlurperClassic().parseTest(artifactoryPublishConfig)
-
-    def releaseLibRes = 'libs-release'
-    def snapshotLibRes = 'libs-snapshot'
-
-    def releaseLibDep = 'libs-release-local'
-    def snapshotLibDep = 'libs-snapshot-local'
-
-    def pomFilename = 'pom.xml'
-    def goalsVal ='clean install'
-//	mavenBuild.resolver server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibRes, snapshotRepo: artifactoryConfigMap.snapshotLibRes
-//	mavenBuild.deployer server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibDep, snapshotRepo: artifactoryConfigMap.snapshotLibDep
-	mavenBuild.resolver server: artfactoryServer, releaseRepo: releaseLibRes, snapshotRepo: snapshotLibRes
-	mavenBuild.deployer server: artfactoryServer, releaseRepo: releaseLibDep, snapshotRepo: snapshotLibDep
-
+	def artifactoryConfigMap = new JsonSlurperClassic().parseText(artifactoryPublishConfig)
+	mavenBuild.resolver server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibRes, snapshotRepo: artifactoryConfigMap.snapshotLibRes
+	mavenBuild.deployer server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibDep, snapshotRepo: artifactoryConfigMap.snapshotLibDep
 	return mavenBuild
 }
 
@@ -67,7 +55,7 @@ def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayNam
 
 def artifactoryPromote(artifactoryPromoteConfig)
 {
-	def artifactoryPromoteMap = new JsonSlurperClassic().parseTest(artifactoryPromoteConfig)
+	def artifactoryPromoteMap = new JsonSlurperClassic().parseText(artifactoryPromoteConfig)
 	def promotionConfigs=[
 	"buildName":artifactoryPromoteMap.buildName,
 	"buildNumber":artifactoryPromoteMap.buildNumber,

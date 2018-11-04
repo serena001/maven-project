@@ -40,9 +40,6 @@ pipeline{
 					artfactoryServer=deployment.createArtifactoryInstance()						
 					mavenBuild=deployment.createMavenBuildInstance()
 					artifactoryPromote=deployment.artifactoryPromote(artifactoryPromoteConfig)
-									
-				//	selectedOption="yes"
-
 				}
 			}
 		}
@@ -66,7 +63,7 @@ pipeline{
 				{
 					def 	versionNumber="1.1.1-SNAPSHOT"
 					
-			/**		//Deploy artifacts to the staging 					
+					//Deploy artifacts to the staging 					
 					pomFileName="pom.xml"
 					goals="clean install"
 					
@@ -85,7 +82,7 @@ pipeline{
 					pomFileName='pom.xml'
 					deployment.buildMaven(mavenBuild,pomFileName,goals)
 					
-					def urlGitRepository="https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing"	
+				/**	def urlGitRepository="https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing"	
 					def commitMsg="Promoted the build from the staging repository to the release repository"				
 					sh 'git add pom.xml'
 					sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
@@ -109,10 +106,10 @@ pipeline{
 				script
 				{
 					pomFileName="pom.xml"
-				/**	goals="clean install"
+					goals="clean install"
 					mavenBuild=deployment.artifactoryDeployResolveConfig(artfactoryServer,artifactoryPublishConfig,mavenBuild)
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
-					artfactoryServer.publishBuildInfo projectBuildInfo	**/
+					artfactoryServer.publishBuildInfo projectBuildInfo	
 				}
 			}
 		}	
