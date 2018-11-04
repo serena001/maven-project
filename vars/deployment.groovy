@@ -5,20 +5,21 @@ import groovy.json.JsonSlurperClassic
 def artifactoryDeployResolveConfig(artifactoryPublishConfig,mavenBuild)
 {
 	env.MAVEN_HOME = "${tool 'maven'}"	
-	def artifactoryConfigMap = new JsonSlurperClassic().parseTest(artifactoryPublishConfig)
+//	def artifactoryConfigMap = new JsonSlurperClassic().parseTest(artifactoryPublishConfig)
 	def mavenBuildMap = new JsonSlurperClassic().parseText(mavenBuildConfig)	
-	  def releaseLibRes = artifactoryConfigMap.releaseLibRes
-    def snapshotLibRes = artifactoryConfigMap.snapshotLibRes
 
-    def releaseLibDep = artifactoryConfigMap.releaseLibDep
-    def snapshotLibDep = artifactoryConfigMap.snapshotLibDep
+    def releaseLibRes = 'libs-release'
+    def snapshotLibRes = 'libs-snapshot'
+
+    def releaseLibDep = 'libs-release-local'
+    def snapshotLibDep = 'libs-snapshot-local'
 
     def pomFilename = 'pom.xml'
     def goalsVal ='clean install'
 //	mavenBuild.resolver server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibRes, snapshotRepo: artifactoryConfigMap.snapshotLibRes
 //	mavenBuild.deployer server: artfactoryServer, releaseRepo: artifactoryConfigMap.releaseLibDep, snapshotRepo: artifactoryConfigMap.snapshotLibDep
-//	mavenBuild.resolver server: artfactoryServer, releaseRepo: releaseLibRes, snapshotRepo: snapshotLibRes
-//	mavenBuild.deployer server: artfactoryServer, releaseRepo: releaseLibDep, snapshotRepo: snapshotLibDep
+	mavenBuild.resolver server: artfactoryServer, releaseRepo: releaseLibRes, snapshotRepo: snapshotLibRes
+	mavenBuild.deployer server: artfactoryServer, releaseRepo: releaseLibDep, snapshotRepo: snapshotLibDep
 
 	return mavenBuild
 }
