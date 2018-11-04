@@ -38,9 +38,10 @@ pipeline{
 					emailConfig=readFile(file:"src/main/resources/emailConfig.json")
 					promotionConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
 					
+					artfactoryServer=deployment.createArtifactoryInstance(artifactoryConfig)	
 					artifactoryPromoteConfig=deployment.artifactoryPromote(promotionConfig,artfactoryServer)					
 					mavenBuild=deployment.createMavenBuildInstance()
-					artfactoryServer=deployment.createArtifactoryInstance(artifactoryConfig)					
+									
 					//choice="yes"
 
 				}
