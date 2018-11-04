@@ -95,7 +95,7 @@ pipeline{
 					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
 				
 				}
-			}
+			} 
 		}
 		stage('Do not promote to release but publish to artifactory snapshot')
 		{
