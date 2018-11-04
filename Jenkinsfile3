@@ -8,7 +8,7 @@ def projectBuildInfo;
 def promoteQuestion;
 def goals;
 def pomFileName;
-//def choice;
+def choice;
 
 pipeline{
 	agent any
