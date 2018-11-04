@@ -8,7 +8,7 @@ def projectBuildInfo;
 def promoteQuestion;
 def goals;
 def pomFileName;
-//def choice;
+def selectedOption;
 
 pipeline{
 	agent any
@@ -41,7 +41,7 @@ pipeline{
 					mavenBuild=deployment.createMavenBuildInstance()
 				//	artifactoryPromote=deployment.artifactoryPromote(artifactoryPromoteConfig)
 									
-				//	choice="yes"
+				//	selectedOption="yes"
 
 				}
 			}
@@ -50,7 +50,7 @@ pipeline{
 		{
 			steps{
 				script{
-					def choice = input message: 'Do you want to promote this?', ok: 'OK',
+					 selectedOption = input message: 'Do you want to promote this?', ok: 'OK',
 								parameters:[choice(name:'CHOICE',choices:'yes\no',description:'')]
 				}
 			}
@@ -58,7 +58,7 @@ pipeline{
 		stage('promotion')
 		{
 			when{
-				expression{ choice=='yes'}
+				expression{ selectedOption=='yes'}
 			}
 			steps
 			{
@@ -102,7 +102,7 @@ pipeline{
 		stage('Do not promote to release but publish to artifactory snapshot')
 		{
 			when{
-				expression{choice=='no'}
+				expression{selectedOption=='no'}
 			}
 			steps
 			{
