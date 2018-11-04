@@ -2,7 +2,7 @@
 
 import groovy.json.JsonSlurperClassic
 
-def artifactoryDeployResolveConfig(artifactoryPublishConfig,mavenBuild)
+def artifactoryDeployResolveConfig(artifactoryPublishConfig,mavenBuildConfig)
 {
 	env.MAVEN_HOME = "${tool 'maven'}"	
 //	def artifactoryConfigMap = new JsonSlurperClassic().parseTest(artifactoryPublishConfig)
