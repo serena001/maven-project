@@ -108,12 +108,12 @@ pipeline{
 			steps
 			{
 				script
-				{
+				{/**
 					pomFileName="pom.xml"
 					goals="clean install"
 					mavenBuild=deployment.artifactoryDeployResolveConfig(artfactoryServer,artifactoryPublishConfig,mavenBuild)
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
-					artfactoryServer.publishBuildInfo projectBuildInfo	
+					artfactoryServer.publishBuildInfo projectBuildInfo	**/
 				}
 			}
 		}	
