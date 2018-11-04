@@ -87,10 +87,10 @@ pipeline{
 					**/	
 					def urlGitRepository="https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing"	
 					def commitMsg="Promoted the build from the staging repository to the release repository"				
-					sh 'git add ${pomFileName}'
-					sh 'git commit -m "${commitMsg}"'
+					sh 'git add pom.xml'
+					sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
 					sh 'git config --global push.default simple'
-					sh 'git push ${urlGitRepository}'
+					sh 'git push https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing'
 				/**						
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
