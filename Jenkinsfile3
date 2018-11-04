@@ -94,7 +94,7 @@ pipeline{
 					**/					
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
-					//deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromoteConfig,displayName)
+					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromoteConfig,displayName)
 				
 				}
 			}
