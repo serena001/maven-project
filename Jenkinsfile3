@@ -96,8 +96,8 @@ pipeline{
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
 					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
-				
-				}**/
+				**/
+				}
 			}
 		}
 		stage('Do not promote to release but publish to artifactory snapshot')
