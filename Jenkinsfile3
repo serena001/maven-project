@@ -76,20 +76,18 @@ pipeline{
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 				
 					//Update the pom.xml file(s) with a new version number
-					def versionNumberNew=deployment.updatePOMVersionNumber(versionNumber)
-					echo versionNumberNew
+					//def versionNumberNew=deployment.updatePOMVersionNumber(versionNumber)
+					//echo versionNumberNew
 					
 					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit".toString()
 					pomFileName='pom.xml'
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo
 					
-					def urlGitRepository="https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing"	
 					def commitMsg="Promoted the build from the staging repository to the release repository"				
 					sh 'git add pom.xml'
 					sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
 					sh 'git config --global push.default simple'
-					sh 'git push https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing'
 										
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
