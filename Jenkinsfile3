@@ -41,7 +41,7 @@ pipeline{
 					artfactoryServer=deployment.createArtifactoryInstance()						
 					mavenBuild=deployment.createMavenBuildInstance()
 									
-					//choice="yes"
+					choice="no"
 
 				}
 			}
