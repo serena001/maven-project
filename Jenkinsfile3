@@ -81,7 +81,7 @@ pipeline{
 					//Update the pom.xml file(s) with a new version number
 					//-----------need to increase the number of the verison-------------
 					
-					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit"
+					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit".toString()
 					pomFileName='pom.xml'
 					deployment.buildMaven(mavenBuild,pomFileName,goals)
 					
