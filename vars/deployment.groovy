@@ -60,7 +60,7 @@ def buildMaven(mavenBuild,pomFileName,goals)
 	return projectBuildInfo
 }
 
-def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromoteConfig,displayName)
+def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
 {
 	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromoteConfig, displayName:displayName
 }
