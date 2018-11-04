@@ -130,7 +130,7 @@ pipeline{
 			script{
 				echo "Process is successful"
 				//deployment.sendEmail(emailConfig)
-				//deployment.archiveArtifact(archiveConfig)
+				deployment.archiveArtifact(archiveConfig)
 			}
 		}
 		unstable{
