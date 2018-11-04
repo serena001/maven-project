@@ -79,7 +79,7 @@ pipeline{
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 				**/	
 					//Update the pom.xml file(s) with a new version number
-					-----------need to increase the number of the verison-------------
+					//-----------need to increase the number of the verison-------------
 					
 					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit"
 					pomFileName='pom.xml'
