@@ -3,9 +3,13 @@ def archiveConfig;
 def artifactoryPublishConfig;
 def emailConfig;
 def promotionConfig;
-def artifactoryConfig;
 def mavenBuild;
 def artifactoryServer;
+def projectBuildInfo;
+def promoteQuestion;
+def goals;
+def pomFileName;
+def choice;
 
 pipeline{
 	agent any
@@ -23,81 +27,129 @@ pipeline{
 	}
 	stages
 	{
-		/**stage('Setup Configuration parameters to be used by the pipeline')
+		stage('Setup Configuration parameters to be used by the pipeline')
 		{
 			steps
 			{
 				script
 				{
-					//archiveConig = readFile(file:"src/main/resources/archiveConfig.json")
-					//artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
-					//emailConfig=readFile(file:"src/main/resources/emailConfig.json")
-					//promotionConfig=readFile(file:"src/main/resources/promotionConfig.json")
-					//artifactoryConfig=readFile(file:"src/main/resources/artifactoryConfig.json")
-					//mavenBuild=deployment.createMavenBuildInstance()
-					//artfactoryServer=deployment.createArtifactoryInstance(artifactoryConfig)
-					//mavenBuildConfig=readFile(file:"src/main/resources/mavenBuildConfig.json")
+					archiveConfig = readFile(file:"src/main/resources/archiveConfig.json")
+					artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
+					emailConfig=readFile(file:"src/main/resources/emailConfig.json")
+					promotionConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
+					
+					artifactoryPromoteConfig=deployment.artifactoryPromote(promotionConfig,artfactoryServer)					
+					mavenBuild=deployment.createMavenBuildInstance()
+					artfactoryServer=deployment.createArtifactoryInstance(artifactoryConfig)					
+					//choice="yes"
+
 				}
 			}
-		}**/
+		}
+		stage('input for releasing build')
+		{
+			steps{
+				script{
+					def choice = input: message "Do you want to promote this?"
+					ok "OK",
+					parameters:choice(name:'CHOICE',choices:['yes','no'],description:'')
+				}
+			}
+		}
 		stage('promotion')
 		{
-		/**	input
-			{
-				message "Do you want to promote this?"
-				ok "OK"
-				parameters
-				{
-					choice(name:'CHOICE',choices:['yes','no'],description:'')
-				}
-			}
 			when{
-				expression{params.CHOICE=='yes'}
-			}**/
+				expression{ choice=='yes'}
+			}
 			steps
 			{
-				//echo "${params.CHOICE}"
 				script
 				{
-					//Deploy artifacts to the staging and snapshot repositories
-				//	deployment.artifactoryDeploy(artifactoryConfig,artfactoryServer,mavenBuild)
+					def 	versionNumber="1.1.1-SNAPSHOT"
 					
-					//Update the repository in GIT (pom.xml)
-					sh 'git add pom.xml'
-					sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
-					sh "git push ''"
+					//Deploy artifacts to the staging 					
+					pomFileName="pom.xml"
+					goals="clean install"
 					
+					//Change the maven descriptor from snapshot to release to create release artifacts, version number is increased by a version
+					def mavenDescriptor = Artifactory.mavenDescriptor()
+					mavenDescriptor.version = ${versionNumber}
+					
+					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactoryConfig,mavenBuild)
+					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
+					artfactoryServer.publishBuildInfo projectBuildInfo	
+					
+					//Update the pom.xml file(s) with a new version number
+					-----------need to increase the number of the verison-------------
+					
+					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit"
+					pomFileName='pom.xml'
+					deployment.buildMaven(mavenBuild,pomFileName,goals)
+					
+					def urlGitRepository="https://chowcc:yellApp145@gccode.ssc-spc.gc.ca/chowcc/mavenProjectExperiment.git:HEADrefs/heads/testing"	
+					def commitMsg="Promoted the build from the staging repository to the release repository"				
+					sh 'git add ${pomFileName}'
+					sh 'git commit -m "${commitMsg}"'
+					sh 'git config --global push.default simple'
+					sh 'git push ${urlGitRepository}'
+										
 					//Promote artifacts from the staging repository to the release repository
-				//	deployment.artifactoryPromote(promotionConfig, artfactoryServer)
+					def displayName="Promote"
+					//deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromoteConfig,displayName)
+
 				}
 			}
-			/**  THIS IS WORKING when{
-				expression{params.CHOICE=='no'}
-			}
-			steps
-			{
-				//echo "${params.CHOICE}"
-				script
-				{
-					//push to git repository
-					def mavenBuild1 = Artifactory.newMavenBuild()
-					mavenBuild1.deployer.deployArtifacts=false
-					def goals = "versions:set -DnewVersion=1.1.1 -DprocessAllModules versions:commit"
-					mavenBuild1.run(pom:'pom.xml',goals:goals)
-					//deployment.buildMaven(mavenBuild,mavenBuildConfig)
-				}
-			}**/
 		}
-		stage('archive')
+		stage('Do not promote to release but publish to artifactory snapshot')
 		{
+			when{
+				expression{choice=='no'}
+			}
 			steps
 			{
 				script
 				{
-					deployment.archiveArtifact(archiveConfig)
+					pomFileName="pom.xml"
+					goals="clean install"
+					deployment.buildMaven(mavenBuild,pomFileName,goals)
 				}
 			}
+		}		
+	}
+	post{
+		aborted
+		{
+			echo "Process was aborted"
+			script{
+				echo "Process was aborted"
+				//deployment.sendEmail(emailConfig)
+			}
+			
 		}
+		success{
+			echo "Process is successful"
+			script{
+				echo "Process is successful"
+				//deployment.sendEmail(emailConfig)
+				deployment.archiveArtifact(archiveConfig)
+			}
+		}
+		unstable{
+			echo "Process is unstable"
+			script{
+				echo "Process is unstable"
+				//deployment.sendEmail(emailConfig)
+			}
+		}
+		failure{
+			echo "Process failed"
+			script{
+				echo "Process failed"
+				//Send failure email using template
+				//deployment.sendEmail(emailConfig)
+			}
+		}
+		
 	}
 
 }

@@ -1,3 +1,5 @@
 {
-	"archiveSrc":"pom.xml"
+	"archiveSrc":"pom.xml",
+	"fingerprint":true,
+	"OnlyIfSuccessful":true
 }

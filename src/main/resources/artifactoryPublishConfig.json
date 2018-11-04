@@ -1,9 +1,8 @@
 {
 	"releaseLibRes":"libs-release",
 	"snapshotLibRes":"libs-snapshot",
-	"releaseLibDep":"libs-snapshot-release-local",
-	"snapshotLibDep":"libs-snapshot-snapshot-local",
-	"pomFilename":"pom.xml",
-	"goalsVal":"clean install"
+	"releaseLibDep":"libs-release-local",
+	"snapshotLibDep":"libs-snapshot-local",
+	"deployArtifacts":true
 	
 }
