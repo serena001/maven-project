@@ -51,7 +51,7 @@ pipeline{
 			steps{
 				script{
 					def choice = input message: 'Do you want to promote this?', ok: 'OK',
-								parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
+								parameters:[choice(name:'CHOICE',choices:'yes\no',description:'')]
 				}
 			}
 		}
