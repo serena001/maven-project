@@ -40,6 +40,7 @@ pipeline{
 					
 					artfactoryServer=deployment.createArtifactoryInstance()						
 					mavenBuild=deployment.createMavenBuildInstance()
+					artifactoryPromote=deployment.artifactoryPromote(artifactoryPromoteConfig)
 									
 					choice="yes"
 
@@ -94,7 +95,7 @@ pipeline{
 					**/					
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
-					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromoteConfig,displayName)
+					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
 				
 				}
 			}
