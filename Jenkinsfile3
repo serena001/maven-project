@@ -46,7 +46,7 @@ pipeline{
 				}
 			}
 		}
-		stage('input for releasing build')
+/**		stage('input for releasing build')
 		{
 			steps{
 				script{
@@ -54,7 +54,7 @@ pipeline{
 								parameters: [choice(name:'CHOICE',choices:['yes','no'],description:'')]
 				}
 			}
-		}
+		}**/
 /**		stage('promotion')
 		{
 			when{
