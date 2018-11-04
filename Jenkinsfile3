@@ -74,7 +74,7 @@ pipeline{
 					def mavenDescriptor = Artifactory.mavenDescriptor()
 					mavenDescriptor.version = versionNumber
 					
-					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactoryConfig,mavenBuild)
+					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactoryPublishConfig,mavenBuild)
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 					
