@@ -80,7 +80,8 @@ pipeline{
 					
 					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit".toString()
 					pomFileName='pom.xml'
-					deployment.buildMaven(mavenBuild,pomFileName,goals)
+					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
+					artfactoryServer.publishBuildInfo projectBuildInfo
 					
 				/**	def urlGitRepository="https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing"	
 					def commitMsg="Promoted the build from the staging repository to the release repository"				
@@ -129,7 +130,7 @@ pipeline{
 			script{
 				echo "Process is successful"
 				//deployment.sendEmail(emailConfig)
-				//deployment.archiveArtifact(archiveConfig)
+				deployment.archiveArtifact(archiveConfig)
 			}
 		}
 		unstable{
