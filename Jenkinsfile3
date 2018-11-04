@@ -72,7 +72,7 @@ pipeline{
 					
 					//Change the maven descriptor from snapshot to release to create release artifacts, version number is increased by a version
 					def mavenDescriptor = Artifactory.mavenDescriptor()
-					mavenDescriptor.version = ${versionNumber}
+					mavenDescriptor.version = versionNumber
 					
 					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactoryConfig,mavenBuild)
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
