@@ -79,14 +79,14 @@ pipeline{
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 					
-					//Update the pom.xml file(s) with a new version number
+				/**	//Update the pom.xml file(s) with a new version number
 					-----------need to increase the number of the verison-------------
 					
 					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit"
 					pomFileName='pom.xml'
 					deployment.buildMaven(mavenBuild,pomFileName,goals)
 					
-					def urlGitRepository="https://chowcc:yellApp145@gccode.ssc-spc.gc.ca/chowcc/mavenProjectExperiment.git:HEADrefs/heads/testing"	
+					def urlGitRepository="https://github.com/serena001/maven-project.git:HEADrefs/heads/testing"	
 					def commitMsg="Promoted the build from the staging repository to the release repository"				
 					sh 'git add ${pomFileName}'
 					sh 'git commit -m "${commitMsg}"'
@@ -96,7 +96,7 @@ pipeline{
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
 					//deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromoteConfig,displayName)
-
+				**/
 				}
 			}
 		}
