@@ -110,7 +110,8 @@ pipeline{
 				{
 					pomFileName="pom.xml"
 					goals="clean install"
-					deployment.buildMaven(mavenBuild,pomFileName,goals)
+					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
+					artfactoryServer.publishBuildInfo projectBuildInfo	
 				}
 			}
 		}	
