@@ -8,7 +8,7 @@ def projectBuildInfo;
 def promoteQuestion;
 def goals;
 def pomFileName;
-def choice;
+//def choice;
 
 pipeline{
 	agent any
@@ -50,7 +50,7 @@ pipeline{
 		{
 			steps{
 				script{
-					  choice = input message: 'Do you want to promote this?', ok: 'OK',
+					def choice = input message: 'Do you want to promote this?', ok: 'OK',
 								parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
 				}
 			}
@@ -58,7 +58,7 @@ pipeline{
 		stage('promotion')
 		{
 			when{
-				expression{ CHOICE=='yes'}
+				expression{ choice=='yes'}
 			}
 			steps
 			{
@@ -102,7 +102,7 @@ pipeline{
 		stage('Do not promote to release but publish to artifactory snapshot')
 		{
 			when{
-				expression{CHOICE=='no'}
+				expression{choice=='no'}
 			}
 			steps
 			{
