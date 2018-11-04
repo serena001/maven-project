@@ -42,12 +42,12 @@ pipeline{
 					mavenBuild=deployment.createMavenBuildInstance()
 					artifactoryPromote=deployment.artifactoryPromote(artifactoryPromoteConfig)
 									
-					choice="yes"
+				//	choice="yes"
 
 				}
 			}
 		}
-/**		stage('input for releasing build')
+		stage('input for releasing build')
 		{
 			steps{
 				script{
@@ -55,7 +55,7 @@ pipeline{
 								parameters: [choice(name:'CHOICE',choices:['yes','no'],description:'')]
 				}
 			}
-		}**/
+		}
 		stage('promotion')
 		{
 			when{
@@ -92,12 +92,12 @@ pipeline{
 					sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
 					sh 'git config --global push.default simple'
 					sh 'git push https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing'
-					**/					
+										
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
 					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
 				
-				}
+				}**/
 			}
 		}
 		stage('Do not promote to release but publish to artifactory snapshot')
