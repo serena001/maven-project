@@ -2,14 +2,13 @@
 def archiveConfig;
 def artifactoryPublishConfig;
 def emailConfig;
-def promotionConfig;
 def mavenBuild;
 def artifactoryServer;
 def projectBuildInfo;
 def promoteQuestion;
 def goals;
 def pomFileName;
-def choice;
+//def choice;
 
 pipeline{
 	agent any
@@ -34,11 +33,11 @@ pipeline{
 				script
 				{
 					archiveConfig = readFile(file:"src/main/resources/archiveConfig.json")
-					artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
+					//artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
 					emailConfig=readFile(file:"src/main/resources/emailConfig.json")
-					artifactoryPromoteConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
+					//artifactoryPromoteConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
 					
-				//	artfactoryServer=deployment.createArtifactoryInstance()						
+					artfactoryServer=deployment.createArtifactoryInstance()						
 					mavenBuild=deployment.createMavenBuildInstance()
 				//	artifactoryPromote=deployment.artifactoryPromote(artifactoryPromoteConfig)
 									
@@ -51,8 +50,8 @@ pipeline{
 		{
 			steps{
 				script{
-					 choice = input message: "Do you want to promote this?", ok: "OK",
-								parameters: [choice(name:'CHOICE',choices:['yes','no'],description:'')]
+					 def choice = input message: 'Do you want to promote this?', ok: 'OK',
+								parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
 				}
 			}
 		}
