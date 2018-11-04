@@ -55,7 +55,7 @@ pipeline{
 				}
 			}
 		}
-		/**stage('promotion')
+/**		stage('promotion')
 		{
 			when{
 				expression{ choice=='yes'}
@@ -78,7 +78,7 @@ pipeline{
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 					
-				/**	//Update the pom.xml file(s) with a new version number
+					//Update the pom.xml file(s) with a new version number
 					-----------need to increase the number of the verison-------------
 					
 					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit"
@@ -95,10 +95,10 @@ pipeline{
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
 					//deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromoteConfig,displayName)
-				**/
+				
 				}
 			}
-		}
+		}**/
 		stage('Do not promote to release but publish to artifactory snapshot')
 		{
 			when{
@@ -113,7 +113,7 @@ pipeline{
 					deployment.buildMaven(mavenBuild,pomFileName,goals)
 				}
 			}
-		}	**/	
+		}	
 	}
 	post{
 		aborted
