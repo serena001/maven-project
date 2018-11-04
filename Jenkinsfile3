@@ -58,7 +58,7 @@ pipeline{
 		stage('promotion')
 		{
 			when{
-				expression{ choice=='yes'}
+				expression{ CHOICE=='yes'}
 			}
 			steps
 			{
@@ -102,7 +102,7 @@ pipeline{
 		stage('Do not promote to release but publish to artifactory snapshot')
 		{
 			when{
-				expression{choice=='no'}
+				expression{CHOICE=='no'}
 			}
 			steps
 			{
