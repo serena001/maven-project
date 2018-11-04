@@ -68,7 +68,7 @@ def artifactoryPromote(artifactoryPromoteConfig)
 }
 
 def updatePOMVersionNumber(versionNumber){
-	def verionNumberArry = (versionNumber.split("-"))[0].split(".")
+	def versionNumberArry = (versionNumber.split("-"))[0].split(".")
 	def versionNumberNew = versionNumberArry[0] + "." + versionNumberArry[1] + "." + (versionNumberArry[2] + 1) + "-" + verionNumberArry[3]
 	return versionNumber
 }
