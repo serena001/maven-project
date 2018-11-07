@@ -164,7 +164,7 @@ pipeline{
 	post{
 		aborted
 		{
-			echo "Process was aborted"
+			//echo "Process was aborted"
 			script{
 				echo "Process was aborted"
 				//deployment.sendEmail(emailConfig)
@@ -172,7 +172,7 @@ pipeline{
 			
 		}
 		success{
-			echo "Process is successful"
+			//echo "Process is successful"
 			script{
 				echo "Process is successful"
 				//deployment.sendEmail(emailConfig)
@@ -180,14 +180,14 @@ pipeline{
 			}
 		}
 		unstable{
-			echo "Process is unstable"
+			//echo "Process is unstable"
 			script{
 				echo "Process is unstable"
 				//deployment.sendEmail(emailConfig)
 			}
 		}
 		failure{
-			echo "Process failed"
+			//echo "Process failed"
 			script{
 				echo "Process failed"
 				//Send failure email using template
