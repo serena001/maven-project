@@ -44,9 +44,9 @@ pipeline{
 					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
 					artifactionDeployResolveConfig=deploymentConfig.artifactoryDeploy
 					
-					artfactoryServer=deployment.createArtifactoryInstance()						
-					mavenBuild=deployment.createMavenBuildInstance()
-					artifactoryPromote=deployment.artifactoryPromote(artifactoryPromoteConfig)
+					artfactoryServer=deployment2.createArtifactoryInstance()						
+					mavenBuild=deployment2.createMavenBuildInstance()
+					artifactoryPromote=deployment2.artifactoryPromote(artifactoryPromoteConfig)
 				 	versionNumber="1.1.1-SNAPSHOT"
 				}
 			}
@@ -84,8 +84,8 @@ pipeline{
 					mavenDescriptor.pomFile=pomFileName
 					mavenDescriptor.transform()
 					
-					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,artfactoryServer,mavenBuild)
-					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
+					mavenBuild=deployment2.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,artfactoryServer,mavenBuild)
+					projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 					
 				}
@@ -101,12 +101,12 @@ pipeline{
 				script
 				{
 					//Update the pom.xml file(s) with a new version number
-					//def versionNumberNew=deployment.updatePOMVersionNumber(versionNumber)
+					//def versionNumberNew=deployment2.updatePOMVersionNumber(versionNumber)
 					//echo versionNumberNew
 					
 					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit".toString()
 					pomFileName='pom.xml'
-					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
+					projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 				}
 			}
@@ -138,7 +138,7 @@ pipeline{
 				{	
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
-					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
+					deployment2.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
 				
 				}
 			}
@@ -154,8 +154,8 @@ pipeline{
 				{
 					pomFileName="pom.xml"
 					goals="clean install"
-					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,artfactoryServer,mavenBuild)
-					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
+					mavenBuild=deployment2.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,artfactoryServer,mavenBuild)
+					projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 				}
 			}
@@ -167,7 +167,7 @@ pipeline{
 			//echo "Process was aborted"
 			script{
 				echo "Process was aborted"
-				//deployment.sendEmail(emailConfig)
+				//deployment2.sendEmail(emailConfig)
 			}
 			
 		}
@@ -175,15 +175,15 @@ pipeline{
 			//echo "Process is successful"
 			script{
 				echo "Process is successful"
-				//deployment.sendEmail(emailConfig)
-				//deployment.archiveArtifact(archiveConfig)
+				//deployment2.sendEmail(emailConfig)
+				//deployment2.archiveArtifact(archiveConfig)
 			}
 		}
 		unstable{
 			//echo "Process is unstable"
 			script{
 				echo "Process is unstable"
-				//deployment.sendEmail(emailConfig)
+				//deployment2.sendEmail(emailConfig)
 			}
 		}
 		failure{
@@ -191,7 +191,7 @@ pipeline{
 			script{
 				echo "Process failed"
 				//Send failure email using template
-				//deployment.sendEmail(emailConfig)
+				//deployment2.sendEmail(emailConfig)
 			}
 		}
 		
