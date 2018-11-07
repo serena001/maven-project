@@ -47,7 +47,7 @@ pipeline{
 					artfactoryServer=deployment.createArtifactoryInstance()						
 					mavenBuild=deployment.createMavenBuildInstance()
 					artifactoryPromote=deployment.artifactoryPromote(artifactoryPromoteConfig)
-					def 	versionNumber="1.1.1-SNAPSHOT"
+				 	versionNumber="1.1.1-SNAPSHOT"
 				}
 			}
 		}
