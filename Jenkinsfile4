@@ -189,7 +189,7 @@ pipeline{
 		failure{
 			//echo "Process failed"
 			script{
-				echo "Process failed"
+				echo "Process failed11"
 				//Send failure email using template
 				//deployment2.sendEmail(emailConfig)
 			}
