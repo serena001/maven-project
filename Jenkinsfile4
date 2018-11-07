@@ -89,6 +89,7 @@ pipeline{
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 					
 				}
+			}
 		}
 		stage('Update POM xml files ')
 		{
