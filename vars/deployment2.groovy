@@ -5,10 +5,10 @@ import groovy.json.JsonSlurperClassic
 def artifactoryDeployResolveConfig(artifactionDeployResolveConfig,mavenBuild)
 {
 	env.MAVEN_HOME = "${tool 'maven'}"
-	def deployer = [	server: artifactionDeployResolveConfig.artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibDep, snapshotRepo: artifactionDeployResolveConfig.snapshotLibDep]
+	//def deployer = [	server: artifactionDeployResolveConfig.artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibDep, snapshotRepo: artifactionDeployResolveConfig.snapshotLibDep]
 	mavenBuild.resolver server: artifactionDeployResolveConfig.artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibRes, snapshotRepo: artifactionDeployResolveConfig.snapshotLibRes
-	//mavenBuild.deployer server: artifactionDeployResolveConfig.artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibDep, snapshotRepo: artifactionDeployResolveConfig.snapshotLibDep
-	mavenBuild.deployer deployer
+	mavenBuild.deployer server: artifactionDeployResolveConfig.artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibDep, snapshotRepo: artifactionDeployResolveConfig.snapshotLibDep
+	//mavenBuild.deployer deployer
 	return mavenBuild
 }
 
