@@ -1,4 +1,4 @@
-@Library('deployment') _
+@Library('deployment2') _
 def archiveConfig;
 def artifactoryPublishConfig;
 def emailConfig;
@@ -9,6 +9,10 @@ def promoteQuestion;
 def goals;
 def pomFileName;
 def selectedOption;
+def 	versionNumber;
+def selectedOptionVersionNumber;
+def artifactoryDeployResolveConfig;
+def deploymentConfig;
 
 pipeline{
 	agent any
@@ -37,9 +41,13 @@ pipeline{
 					emailConfig=readFile(file:"src/main/resources/emailConfig.json")
 					artifactoryPromoteConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
 					
+					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
+					artifactionDeployResolveConfig=deploymentConfig.artifactoryDeploy
+					
 					artfactoryServer=deployment.createArtifactoryInstance()						
 					mavenBuild=deployment.createMavenBuildInstance()
 					artifactoryPromote=deployment.artifactoryPromote(artifactoryPromoteConfig)
+					def 	versionNumber="1.1.1-SNAPSHOT"
 				}
 			}
 		}
@@ -49,21 +57,24 @@ pipeline{
 				script{
 					 selectedOption = input message: 'Do you want to promote this?', ok: 'OK',
 								parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
+					if(selectedOption=="yes")
+					{
+						 selectedOptionVersionNumber = input message: 'Please enter a release version number?', ok: 'OK',
+								string(name:'versionNumber', defaultValue:'', description:'')
+					}
 				}
 			}
 		}
-		stage('promotion')
+		stage('Publish the build to staging')
 		{
 			when{
-				expression{ selectedOption=='yes'}
+				expression{selectedOption=='yes'}
 			}
 			steps
 			{
 				script
 				{
-					def 	versionNumber="1.1.1-SNAPSHOT"
-					
-					//---------------Deploy artifacts to the staging 	----------------------------------------------				
+					//Deploy artifacts to the staging 					
 					pomFileName="pom.xml"
 					goals="clean install"
 					
@@ -72,32 +83,67 @@ pipeline{
 					mavenDescriptor.version = versionNumber
 					mavenDescriptor.pomFile=pomFileName
 					mavenDescriptor.transform()
-					mavenBuild=deployment.artifactoryDeployResolveConfig(artfactoryServer,artifactoryPublishConfig,mavenBuild)
+					
+					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,mavenBuild)
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
-				
-					//------------------Update the pom.xml file(s) with a new version number ----------------------
+					
+				}
+		}
+		stage('Update POM xml files ')
+		{
+			when{
+				expression{selectedOption=='yes'}
+			}
+			steps
+			{
+				script
+				{
+					//Update the pom.xml file(s) with a new version number
 					//def versionNumberNew=deployment.updatePOMVersionNumber(versionNumber)
 					//echo versionNumberNew
+					
 					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit".toString()
 					pomFileName='pom.xml'
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
-					artfactoryServer.publishBuildInfo projectBuildInfo
-					
-					//---------------Update GIT repository ---------------------------------------------------------
+					artfactoryServer.publishBuildInfo projectBuildInfo	
+				}
+			}
+		}
+		stage('Update GIT repository with ')
+		{
+			when{
+				expression{selectedOption=='yes'}
+			}
+			steps
+			{
+				script
+				{
 					def urlGitRepository="https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing"	
 					def commitMsg="Promoted the build from the staging repository to the release repository"				
 					sh 'git add pom.xml'
 					sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
 					sh 'git config --global push.default simple'
 					sh 'git push https:serena001:serena001e78e32e3bab14b50b22e8666d664e021@github.com/serena001/maven-project.git:HEADrefs/heads/testing'
-										
-					//-----------------Promote artifacts from the staging repository to the release repository ------
-					def displayName="Promote"
-					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)				
 				}
-			} 
+			}
 		}
+		stage('Promote build from staging to release repository in Arifactory, Interactive')
+		{
+			when{
+				expression{selectedOption=='yes'}
+			}
+			steps
+			{
+				script
+				{	
+					//Promote artifacts from the staging repository to the release repository
+					def displayName="Promote"
+					deployment.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
+				
+				}
+			}
+		}	
 		stage('Do not promote to release but publish to artifactory snapshot')
 		{
 			when{
@@ -109,7 +155,7 @@ pipeline{
 				{
 					pomFileName="pom.xml"
 					goals="clean install"
-					mavenBuild=deployment.artifactoryDeployResolveConfig(artfactoryServer,artifactoryPublishConfig,mavenBuild)
+					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,mavenBuild)
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 				}
