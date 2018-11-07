@@ -57,11 +57,11 @@ pipeline{
 				script{
 					 selectedOption = input message: 'Do you want to promote this?', ok: 'OK',
 								parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
-					if(selectedOption=="yes")
+		/**			if(selectedOption=="yes")
 					{
 						 selectedOptionVersionNumber = input message: 'Please enter a release version number?', ok: 'OK',
 								string(name:'versionNumber', defaultValue:'', description:'')
-					}
+					}**/
 				}
 			}
 		}
