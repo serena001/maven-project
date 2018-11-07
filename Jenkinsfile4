@@ -84,7 +84,7 @@ pipeline{
 					mavenDescriptor.pomFile=pomFileName
 					mavenDescriptor.transform()
 					
-					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,mavenBuild)
+					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,artfactoryServer,mavenBuild)
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 					
@@ -154,7 +154,7 @@ pipeline{
 				{
 					pomFileName="pom.xml"
 					goals="clean install"
-					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,mavenBuild)
+					mavenBuild=deployment.artifactoryDeployResolveConfig(artifactionDeployResolveConfig,artfactoryServer,mavenBuild)
 					projectBuildInfo=deployment.buildMaven(mavenBuild,pomFileName,goals)
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 				}
