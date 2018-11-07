@@ -6,8 +6,8 @@ def artifactoryDeployResolveConfig(artifactionDeployResolveConfig,artfactoryServ
 {
 	env.MAVEN_HOME = "${tool 'maven'}"
 	def deployer = [	server: artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibDep, snapshotRepo: artifactionDeployResolveConfig.snapshotLibDep]
-	mavenBuild.resolver server: artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibRes, snapshotRepo: artifactionDeployResolveConfig.snapshotLibRes
-	//mavenBuild.deployer server: artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibDep, snapshotRepo: artifactionDeployResolveConfig.snapshotLibDep
+	def resolver = [server: artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibRes, snapshotRepo: artifactionDeployResolveConfig.snapshotLibRes]
+	mavenBuild.resolver resolver
 	mavenBuild.deployer deployer
 	return mavenBuild
 }
