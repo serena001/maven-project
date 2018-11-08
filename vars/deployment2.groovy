@@ -78,7 +78,7 @@ def artifactoryPromote(artifactionPromotionConfig,projectBuildInfo)
 	"sourceRepo":artifactionPromotionConfig.sourceRepo,
 	"status":artifactionPromotionConfig.status,
 	"copy":artifactionPromotionConfig.copy,
-	"failfast":artifactionPromotionConfig.failFast]
+	"failFast":artifactionPromotionConfig.failFast]
 	return promotionConfigs
 }
 
