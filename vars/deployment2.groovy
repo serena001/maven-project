@@ -58,8 +58,8 @@ def artifactoryPromote(artifactoryPromoteConfig,projectBuildInfo)
 {
 //	def artifactoryPromoteMap = new JsonSlurperClassic().parseText(artifactoryPromoteConfig)
 	def promotionConfigs=[
-	"buildName":buildInfo.buildName,
-	"buildNumber":buildInfo.buildNumber,
+	"buildName":projectBuildInfo.buildName,
+	"buildNumber":projectBuildInfo.buildNumber,
 	"targetRepo":artifactoryPromoteConfig.targetRepo,
 	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
 	"status":artifactoryPromoteConfig.status,
