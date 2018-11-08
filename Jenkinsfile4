@@ -140,7 +140,7 @@ pipeline{
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
 					artifactoryPromote=deployment2.artifactoryPromote(artifactionPromotionConfig,projectBuildInfo)
-					deployment2.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
+					deployment2.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName,artifactoryPromoteConfig,projectBuildInfo)
 				
 				}
 			}

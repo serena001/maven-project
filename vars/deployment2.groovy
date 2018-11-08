@@ -49,8 +49,18 @@ def buildMaven(mavenBuild,pomFileName,goals)
 	return projectBuildInfo
 }
 
-def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
+def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName,artifactoryPromoteConfig,projectBuildInfo)
 {
+
+def artifactoryPromote=[
+	"buildName":projectBuildInfo.buildName,
+	"buildNumber":projectBuildInfo.buildNumber,
+	"targetRepo":artifactoryPromoteConfig.targetRepo,
+	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
+	"status":artifactoryPromoteConfig.status,
+	"copy":artifactoryPromoteConfig.copy,
+	"failfast":artifactoryPromoteConfig.failFast]
+	
 	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote, displayName:displayName
 }
 
