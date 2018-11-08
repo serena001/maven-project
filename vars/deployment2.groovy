@@ -49,32 +49,35 @@ def buildMaven(mavenBuild,pomFileName,goals)
 	return projectBuildInfo
 }
 
-def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName,artifactoryPromoteConfig,projectBuildInfo)
+//def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName,artifactoryPromoteConfig,projectBuildInfo)
+def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
+{
 {
 
 def artifactoryPromote1=[
-	"buildName":projectBuildInfo.buildName,
+/**	"buildName":projectBuildInfo.buildName,
 	"buildNumber":projectBuildInfo.buildNumber,
 	"targetRepo":artifactoryPromoteConfig.targetRepo,
 	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
 	"status":artifactoryPromoteConfig.status,
 	"copy":artifactoryPromoteConfig.copy,
-	"failfast":artifactoryPromoteConfig.failFast]
+	"failfast":artifactoryPromoteConfig.failFast]**(/
 	
-	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote1, displayName:displayName
+	//artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote1, displayName:displayName
+	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote, displayName:displayName
 }
 
-def artifactoryPromote(artifactoryPromoteConfig,projectBuildInfo)
+def artifactoryPromote(artifactionPromotionConfig,projectBuildInfo)
 {
-//	def artifactoryPromoteMap = new JsonSlurperClassic().parseText(artifactoryPromoteConfig)
+//	def artifactoryPromoteMap = new JsonSlurperClassic().parseText(artifactionPromotionConfig)
 	def promotionConfigs=[
 	"buildName":projectBuildInfo.buildName,
 	"buildNumber":projectBuildInfo.buildNumber,
-	"targetRepo":artifactoryPromoteConfig.targetRepo,
-	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
-	"status":artifactoryPromoteConfig.status,
-	"copy":artifactoryPromoteConfig.copy,
-	"failfast":artifactoryPromoteConfig.failFast]
+	"targetRepo":artifactionPromotionConfig.targetRepo,
+	"sourceRepo":artifactionPromotionConfig.sourceRepo,
+	"status":artifactionPromotionConfig.status,
+	"copy":artifactionPromotionConfig.copy,
+	"failfast":artifactionPromotionConfig.failFast]
 	return promotionConfigs
 }
 
