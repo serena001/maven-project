@@ -52,7 +52,7 @@ def buildMaven(mavenBuild,pomFileName,goals)
 //def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName,artifactoryPromoteConfig,projectBuildInfo)
 def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
 {
-{
+
 
 def artifactoryPromote1=[
 /**	"buildName":projectBuildInfo.buildName,
