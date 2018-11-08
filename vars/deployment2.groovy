@@ -61,7 +61,7 @@ def artifactoryPromote1=[
 	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
 	"status":artifactoryPromoteConfig.status,
 	"copy":artifactoryPromoteConfig.copy,
-	"failfast":artifactoryPromoteConfig.failFast]**(/
+	"failfast":artifactoryPromoteConfig.failFast]**/
 	
 	//artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote1, displayName:displayName
 	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote, displayName:displayName
