@@ -63,7 +63,7 @@ def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayNam
 	"copy":artifactoryPromoteConfig.copy,
 	"failfast":artifactoryPromoteConfig.failFast]**/
 	
-	Artifactory.addInteractivePromotion server: artfactoryServer, promotionConfig:artifactoryPromote1, displayName:displayName
+	Artifactory.addInteractivePromotion server: artfactoryServer, promotionConfig:artifactoryPromote, displayName:displayName
 //	Artifactory.addInteractivePromotion server: artfactoryServer, promotionConfig: artifactoryPromote, displayName:"Promote me please"	
 //	Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig, displayName: "Promote me please"
 }
