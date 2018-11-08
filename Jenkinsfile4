@@ -59,7 +59,7 @@ pipeline{
 								parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
 		
 						 selectedOptionVersionNumber = input message: 'Please enter a release version number?', ok: 'OK',
-								string(name:'versionNumber', defaultValue:'', description:'')
+								parameters:[string(name:'versionNumber', defaultValue:'', description:'')]
 	
 				}
 			}
