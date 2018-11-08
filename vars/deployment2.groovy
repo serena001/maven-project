@@ -51,7 +51,7 @@ def buildMaven(mavenBuild,pomFileName,goals)
 
 def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
 {
-	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromoteConfig, displayName:displayName
+	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote, displayName:displayName
 }
 
 def artifactoryPromote(artifactoryPromoteConfig,projectBuildInfo)
