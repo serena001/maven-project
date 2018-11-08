@@ -23,6 +23,7 @@ def sendEmail(emailConfig)
 	emailext(
 		subject:emailMap.subject,
 		to:emailMap.to,
+		//body:'${SCRIPT,template-body}'
 		body:emailMap.body,
 		from:emailMap.from,
 		mimeType:emailMap.mimeType

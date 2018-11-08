@@ -56,15 +56,15 @@ def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayNam
 
 def artifactoryPromote(artifactoryPromoteConfig)
 {
-	def artifactoryPromoteMap = new JsonSlurperClassic().parseText(artifactoryPromoteConfig)
+//	def artifactoryPromoteMap = new JsonSlurperClassic().parseText(artifactoryPromoteConfig)
 	def promotionConfigs=[
-	"buildName":artifactoryPromoteMap.buildName,
-	"buildNumber":artifactoryPromoteMap.buildNumber,
-	"targetRepo":artifactoryPromoteMap.targetRepo,
-	"sourceRepo":artifactoryPromoteMap.sourceRepo,
-	"status":artifactoryPromoteMap.status,
-	"copy":artifactoryPromoteMap.copy,
-	"failfast":artifactoryPromoteMap.failFast]
+	"buildName":artifactoryPromoteConfig.buildName,
+	"buildNumber":artifactoryPromoteConfig.buildNumber,
+	"targetRepo":artifactoryPromoteConfig.targetRepo,
+	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
+	"status":artifactoryPromoteConfig.status,
+	"copy":artifactoryPromoteConfig.copy,
+	"failfast":artifactoryPromoteConfig.failFast]
 	return promotionConfigs
 }
 
