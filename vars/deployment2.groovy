@@ -64,7 +64,7 @@ def artifactoryPromote1=[
 	"failfast":artifactoryPromoteConfig.failFast]**/
 	
 	//artfactoryServer.addInteractivePromotion server: artfactoryServer, promotionConfig:artifactoryPromote1, displayName:displayName
-	artfactoryServer.addInteractivePromotion server: artfactoryServer, promotionConfig: artifactoryPromote, displayName: displayName
+	Artifactory.addInteractivePromotion server: artfactoryServer, promotionConfig: artifactoryPromote, displayName: displayName
 }
 
 def artifactoryPromote(artifactionPromotionConfig,projectBuildInfo)
