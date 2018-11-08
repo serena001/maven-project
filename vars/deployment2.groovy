@@ -52,7 +52,7 @@ def buildMaven(mavenBuild,pomFileName,goals)
 def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName,artifactoryPromoteConfig,projectBuildInfo)
 {
 
-def artifactoryPromote=[
+def artifactoryPromote1=[
 	"buildName":projectBuildInfo.buildName,
 	"buildNumber":projectBuildInfo.buildNumber,
 	"targetRepo":artifactoryPromoteConfig.targetRepo,
@@ -61,7 +61,7 @@ def artifactoryPromote=[
 	"copy":artifactoryPromoteConfig.copy,
 	"failfast":artifactoryPromoteConfig.failFast]
 	
-	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote, displayName:displayName
+	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromote1, displayName:displayName
 }
 
 def artifactoryPromote(artifactoryPromoteConfig,projectBuildInfo)
