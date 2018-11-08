@@ -54,12 +54,12 @@ def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayNam
 	artfactoryServer.addInteractivePromotion server:artfactoryServer,promotionConfig:artifactoryPromoteConfig, displayName:displayName
 }
 
-def artifactoryPromote(artifactoryPromoteConfig)
+def artifactoryPromote(artifactoryPromoteConfig,projectBuildInfo)
 {
 //	def artifactoryPromoteMap = new JsonSlurperClassic().parseText(artifactoryPromoteConfig)
 	def promotionConfigs=[
-	"buildName":artifactoryPromoteConfig.buildName,
-	"buildNumber":artifactoryPromoteConfig.buildNumber,
+	"buildName":buildInfo.buildName,
+	"buildNumber":buildInfo.buildNumber,
 	"targetRepo":artifactoryPromoteConfig.targetRepo,
 	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
 	"status":artifactoryPromoteConfig.status,
@@ -69,8 +69,9 @@ def artifactoryPromote(artifactoryPromoteConfig)
 }
 
 def updatePOMVersionNumber(versionNumber){
-	def versionNumberArry = (versionNumber.split("-"))[0].split(".")
-	def versionNumberNew = versionNumberArry[0] + "." + versionNumberArry[1] + "." + (versionNumberArry[2] + 1) + "-" + verionNumberArry[3]
+	def versionNumberArry = versionNumber.split("-")
+	def versionNumb=versionNumberArry[0].split(".")
+	def versionNumberNew = versionNumb[0] + "." + versionNumb[1] + "." + (versionNumb[2] + 1) + "-" + verionNumberArry[3]
 	return versionNumber
 }
 

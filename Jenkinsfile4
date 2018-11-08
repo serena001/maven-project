@@ -39,14 +39,14 @@ pipeline{
 					archiveConfig = readFile(file:"src/main/resources/archiveConfig.json")
 					artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
 					emailConfig=readFile(file:"src/main/resources/emailConfig.json")
-					artifactoryPromoteConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
+					//artifactoryPromoteConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
 					
 					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
 					artifactionDeployResolveConfig=deploymentConfig.artifactoryDeploy
-					
+					artifactionPromotionConfig=deploymentConfig.artifactoryPromotion
 					artfactoryServer=deployment2.createArtifactoryInstance()						
 					mavenBuild=deployment2.createMavenBuildInstance()
-					artifactoryPromote=deployment2.artifactoryPromote(artifactoryPromoteConfig)
+					artifactoryPromote=deployment2.artifactoryPromote(artifactionPromotionConfig,projectBuildInfo)
 				 	versionNumber="1.1.1-SNAPSHOT"
 				}
 			}
@@ -57,11 +57,10 @@ pipeline{
 				script{
 					 selectedOption = input message: 'Do you want to promote this?', ok: 'OK',
 								parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
-		/**			if(selectedOption=="yes")
-					{
+		
 						 selectedOptionVersionNumber = input message: 'Please enter a release version number?', ok: 'OK',
 								string(name:'versionNumber', defaultValue:'', description:'')
-					}**/
+	
 				}
 			}
 		}
