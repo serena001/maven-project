@@ -58,8 +58,8 @@ pipeline{
 					 selectedOption = input message: 'Do you want to promote this?', ok: 'OK',
 								parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
 		
-						 selectedOptionVersionNumber = input message: 'Please enter a release version number?', ok: 'OK',
-								parameters:[string(name:'versionNumber', defaultValue:'', description:'')]
+						 versionNumber = input message: 'Please enter a release version number?', ok: 'OK',
+								parameters:[string(name:'number', defaultValue:'', description:'')]
 	
 				}
 			}
@@ -76,7 +76,7 @@ pipeline{
 					//Deploy artifacts to the staging 					
 					pomFileName="pom.xml"
 					goals="clean install"
-					versionNumber="1.1.2"
+					//versionNumber="1.1.2"
 					
 					//Change the maven descriptor from snapshot to release to create release artifacts, version number is increased by a version
 					def mavenDescriptor = Artifactory.mavenDescriptor()
@@ -103,7 +103,8 @@ pipeline{
 					//Update the pom.xml file(s) with a new version number
 					//def versionNumberNew=deployment2.updatePOMVersionNumber(versionNumber)
 					//echo versionNumberNew
-					versionNumber="1.1.3-SNAPSHOT"
+					//versionNumber="1.1.3-SNAPSHOT"
+					versionNumber=versionNumber + "-SNAPSHOT"
 					goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit".toString()
 					pomFileName='pom.xml'
 					projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
@@ -111,7 +112,7 @@ pipeline{
 				}
 			}
 		}
-		stage('Update GIT repository with ')
+	/**	stage('Update GIT repository with ')
 		{
 			when{
 				expression{selectedOption=='yes'}
@@ -126,7 +127,7 @@ pipeline{
 					sh 'git config --global push.default simple'
 				}
 			}
-		}
+		}**/
 		stage('Promote build from staging to release repository in Arifactory, Interactive')
 		{
 			when{
