@@ -54,8 +54,8 @@ def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayNam
 {
 
 
-def artifactoryPromote1=[
-/**	"buildName":projectBuildInfo.buildName,
+/**def artifactoryPromote1=[
+	"buildName":projectBuildInfo.buildName,
 	"buildNumber":projectBuildInfo.buildNumber,
 	"targetRepo":artifactoryPromoteConfig.targetRepo,
 	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
@@ -63,7 +63,7 @@ def artifactoryPromote1=[
 	"copy":artifactoryPromoteConfig.copy,
 	"failfast":artifactoryPromoteConfig.failFast]**/
 	
-	//artfactoryServer.addInteractivePromotion server: artfactoryServer, promotionConfig:artifactoryPromote1, displayName:displayName
+	Artifactory.addInteractivePromotion server: artfactoryServer, promotionConfig:artifactoryPromote1, displayName:displayName
 //	Artifactory.addInteractivePromotion server: artfactoryServer, promotionConfig: artifactoryPromote, displayName:"Promote me please"	
 //	Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig, displayName: "Promote me please"
 }
