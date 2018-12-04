@@ -1,0 +1,154 @@
+@Library('deployment2') _
+properties([
+	pipelineTriggers[[pollsSCM('H */4 * * 1-5')],
+	disabledConcurrentBuilds()
+])
+
+
+node{
+	def artifactoryPromotionMap;
+	def artifactoryServerConfig;
+	def archiveArtifactConfig;
+	
+	def mavenBuild;
+	def artifactoryServer;
+	def projectBuildInfo;
+	def goals;
+	def pomFileName;
+	def selectedOption;
+	def versionNumber;
+	
+	try
+	{
+		stage('Setup Configuration parameters to be used by the pipeline')
+		{
+			archiveConfig = readFile(file:"src/main/resources/archiveConfig.json")
+			artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
+			emailConfig=readFile(file:"src/main/resources/emailConfig.json")
+			//artifactoryPromoteConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
+					
+			deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
+			artifactoryPromotionMap=deploymentConfig.artifactoryPromotion
+			artifactoryServerConfig=deploymentConfig.artifactoryDeploy
+			archiveArtifactConfig=deploymentConfig.archiveArtifact
+			emailConfig=deploymentConfig.email
+					
+			//create artifactor instance
+			artfactoryServer=deployment.createArtifactoryInstance()
+			//create mavenBuild Instance
+		}
+		stage('Release build input approval and versionNumber questions')
+		{
+			try
+			{
+				timeout(time:30, unit:'SECONDS')
+				{
+					selectedOption = input message: 'Do you want to promote this?', ok: 'OK',
+					parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
+		
+					 versionNumber = input message: 'Please enter a release version number?', ok: 'OK',
+						parameters:[string(name:'number', defaultValue:'', description:'')]
+				}
+			}
+			catch(err)
+			{
+				echo "Timeout occurred. No input was recorded, defaulting the value to no"
+						selectedOption="no"
+			}
+		}
+		stage('Publish the build to Artifactory staging repository')
+		{
+			try
+			{
+					//Deploy artifacts to the staging 					
+					pomFileName="pom.xml"
+					goals="clean install"
+					//versionNumber="1.1.2"
+					
+					//Change the maven descriptor from snapshot to release to create release artifacts, version number is increased by a version
+					def mavenDescriptor = Artifactory.mavenDescriptor()
+					mavenDescriptor.version = versionNumber
+					mavenDescriptor.pomFile=pomFileName
+					mavenDescriptor.transform()
+					
+					mavenBuild=deployment2.artifactoryDeployResolveConfig(artfactoryServer,artifactoryServerConfig,mavenBuild)
+					projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
+					artfactoryServer.publishBuildInfo projectBuildInfo	
+			}
+			catch(err)
+			{
+				echo "failed"
+				build.result.toString()=='FAILURE'
+			}
+			
+		}
+		stage('Update POM xml files with the new version number')
+		{
+			try
+			{
+				versionNumber=deployment2.updatePOMVersionNumber(versionNumber)
+				goals = "versions:set -DnewVersion='${versionNumber}' -DprocessDependencies=true versions:commit".toString()
+				pomFileName='pom.xml'
+				projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
+				artfactoryServer.publishBuildInfo projectBuildInfo
+			}
+			catch(err)
+			{
+				echo "failed"
+				build.result.toString()=='FAILURE'
+			}	
+			
+		}
+	/**	stage('Push updated pom.xml file(s) to GIT repository')
+		{
+			try
+			{			
+				def commitMsg="Promoted the build from the staging repository to the release repository"				
+				sh 'git add pom.xml'
+				sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
+				sh 'git config --global push.default simple'
+				sh 'git push https:// : HEAD:refs/heads/testing'
+			}
+			catch(err)
+			{
+				echo "failed"
+				build.result.toString()=='FAILURE'
+			}
+				
+		}**/
+		stage('Promote build from staging to release repository in Arifactory, Interactive')
+		{
+			try
+			{				
+				//Promote artifacts from the staging repository to the release repository
+				def displayName="Promote"
+				artifactoryPromote=deployment2.artifactoryPromote(artifactoryPromotionMap,projectBuildInfo)
+				deployment2.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
+			}
+			catch(err)
+			{
+				echo "failed"
+				build.result.toString()=='FAILURE'
+			}				
+			
+		}	
+		stage('Do not promote to release but publish to artifactory snapshot')
+		{
+			try
+			{			
+				pomFileName="pom.xml"
+				goals="clean install"
+				mavenBuild=deployment2.artifactoryDeployResolveConfig(artfactoryServer,artifactoryServerConfig,mavenBuild)
+				projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
+				artfactoryServer.publishBuildInfo projectBuildInfo
+			}
+			catch(err)
+			{
+				echo "failed"
+				build.result.toString()=='FAILURE'
+			}	
+				
+		}	
+	}
+}
+	

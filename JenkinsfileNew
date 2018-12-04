@@ -11,6 +11,10 @@ def goals;
 def pomFileName;
 def selectedOption;
 def versionNumber;
+def emailConfig;
+def projectConfig;
+def isSNAPSHOT;
+def isRELEASE;
 
 pipeline{
 	agent any
@@ -49,36 +53,51 @@ pipeline{
 					artfactoryServer=deployment.createArtifactoryInstance()
 					//create mavenBuild Instance
 					mavenBuild=deployment.createMavenBuildInstance()
+					isSNAPSHOT="no"
 				}
 			}
 		}
-		stage('Release build input approval and versionNumber questions')
+		stage('Check master branch')
 		{
+			when
+			{
+			//env.BRANCH_NAME!="master"
+			//Check the branch name and then check the version from the pom.xml if it exists
+			//if(env.BRANCH_NAME does not contain release)
+			//set a variable in the deploymentConfig.json file for the naming convention
+			//open the pom.xml and then check for version 
+			//not{
+			//	branch 'master'}	
+			branch 'testing'			
+			}
 			steps{
 				script{
-					try
-					{
-						timeout(time:30, unit:'SECONDS')
-						{
-							selectedOption = input message: 'Do you want to promote this?', ok: 'OK',
-							parameters:[choice(name:'CHOICE',choices:['yes','no'],description:'')]
-		
-						 	versionNumber = input message: 'Please enter a release version number?', ok: 'OK',
-						 	parameters:[string(name:'number', defaultValue:'', description:'')]
-						}
-					}
-					catch(err)
-					{
-						echo "Timeout occurred. No input was recorded, defaulting the value to no"
-						selectedOption="no"
-					}
+					isSNAPSHOT="yes"
+				}
+			}
+		}
+		stage('Check if release branch')
+		{
+			when
+			{
+				expression{isSNAPSHOT=="no"}
+			}
+			steps
+			{
+				script
+				{
+					searchValue=projectConfig.releaseSearchValue
+					searchString=env.BRANCH_NAME
+					isRELEASE=deployment.isEXIST(searchString,searchValue)
+					def filename=projectConfig.configFilename
+					versionNumber=deployment.retrieveVersionNumber(filename)
 				}
 			}
 		}
 		stage('Publish the build to Artifactory staging repository')
 		{
 			when{
-				expression{selectedOption=='yes'}
+				expression{isSNAPSHOT=="no" && isRELEASE=="yes"}
 			}
 			steps
 			{
@@ -105,7 +124,7 @@ pipeline{
 		stage('Update POM xml files with the new version number')
 		{
 			when{
-				expression{selectedOption=='yes'}
+				expression{isSNAPSHOT=="no" && isRELEASE=="yes"}
 			}
 			steps
 			{
@@ -122,7 +141,7 @@ pipeline{
 	/**	stage('Push updated pom.xml file(s) to GIT repository')
 		{
 			when{
-				expression{selectedOption=='yes'}
+				expression{isSNAPSHOT=="no" && isRELEASE=="yes"}
 			}
 			steps
 			{
@@ -139,7 +158,7 @@ pipeline{
 		stage('Promote build from staging to release repository in Arifactory, Interactive')
 		{
 			when{
-				expression{selectedOption=='yes'}
+				expression{isSNAPSHOT=="no" && isRELEASE=="yes"}
 			}
 			steps
 			{
@@ -155,7 +174,7 @@ pipeline{
 		stage('Do not promote to release but publish to artifactory snapshot')
 		{
 			when{
-				expression{selectedOption=='no'}
+				expression{isSNAPSHOT=="yes"}
 			}
 			steps
 			{

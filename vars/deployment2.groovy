@@ -2,32 +2,27 @@
 
 import groovy.json.JsonSlurperClassic
 
-def artifactoryDeployResolveConfig(artifactionDeployResolveConfig,artfactoryServer,mavenBuild)
+def artifactoryDeployResolveConfig(artfactoryServer,artifactoryDeployMap,mavenBuild)
 {
 	env.MAVEN_HOME = "${tool 'maven'}"
-	def deployer = [	server: artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibDep, snapshotRepo: artifactionDeployResolveConfig.snapshotLibDep]
-	def resolver = [server: artfactoryServer, releaseRepo: artifactionDeployResolveConfig.releaseLibRes, snapshotRepo: artifactionDeployResolveConfig.snapshotLibRes]
-	mavenBuild.resolver resolver
+	def deployer = [	server: artfactoryServer, releaseRepo: artifactoryDeployMap.releaseLibDep, snapshotRepo: artifactoryDeployMap.snapshotLibDep]
+//	def resolver = [server: artfactoryServer, releaseRepo: artifactoryDeployMap.releaseLibRes, snapshotRepo: artifactoryDeployMap.snapshotLibRes]
+//	mavenBuild.resolver resolver
 	mavenBuild.deployer deployer
 	return mavenBuild
 }
 
-def archiveArtifact(archiveConfig)
+def artifactoryPromote(artifactoryPromotionMap,projectBuildInfo)
 {
-	def archiveMap = new JsonSlurperClassic().parseText(archiveConfig)
-	archiveArtifacts artifacts: archiveMap.archiveSrc, fingerprint:archiveMap.fingerprint, OnlyIfSuccessful:archiveMap.OnlyIfSuccessful
-}
-
-def sendEmail(emailConfig)
-{
-	def emailMap = new JsonSlurperClassic().parseText(emailConfig)	
-	emailext(
-		subject:emailMap.subject,
-		to:emailMap.to,
-		body:emailMap.body,
-		from:emailMap.from,
-		mimeType:emailMap.mimeType
-		)
+	def promotionConfigs=[
+	"buildName":projectBuildInfo.buildName,
+	"buildNumber":projectBuildInfo.buildNumber,
+	"targetRepo":artifactoryPromotionMap.targetRepo,
+	"sourceRepo":artifactoryPromotionMap.sourceRepo,
+	"status":artifactoryPromotionMap.status,
+	"copy":artifactoryPromotionMap.copy,
+	"failFast":artifactoryPromotionMap.failFast]
+	return promotionConfigs
 }
 
 def createArtifactoryInstance()
@@ -43,50 +38,83 @@ def createMavenBuildInstance()
 	return mavenBuild
 }
 
+def archiveArtifact(archiveArtifactConfig)
+{
+	def artifacts = [artifacts: archiveArtifactConfig.archiveSrc, fingerprint:archiveArtifactConfig.fingerprint, OnlyIfSuccessful:archiveArtifactConfig.OnlyIfSuccessful]
+	archiveArtifacts artifacts
+}
+
+def sendEmail(emailConfig)
+{
+	def emailExtMap = [subject:emailConfig.subject, to:emailConfig.to, body:emailConfig.body, from:emailConfig.from, mimeType:emailConfig.mimeType]
+	emailext emailExtMap
+}
+
 def buildMaven(mavenBuild,pomFileName,goals)
 {
 	def projectBuildInfo=mavenBuild.run pom:pomFileName,goals:goals
 	return projectBuildInfo
 }
 
-//def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName,artifactoryPromoteConfig,projectBuildInfo)
 def artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)
 {
-
-
-/**def artifactoryPromote1=[
-	"buildName":projectBuildInfo.buildName,
-	"buildNumber":projectBuildInfo.buildNumber,
-	"targetRepo":artifactoryPromoteConfig.targetRepo,
-	"sourceRepo":artifactoryPromoteConfig.sourceRepo,
-	"status":artifactoryPromoteConfig.status,
-	"copy":artifactoryPromoteConfig.copy,
-	"failfast":artifactoryPromoteConfig.failFast]**/
-	
-	Artifactory.addInteractivePromotion server: artfactoryServer, promotionConfig:artifactoryPromote, displayName:displayName
-//	Artifactory.addInteractivePromotion server: artfactoryServer, promotionConfig: artifactoryPromote, displayName:"Promote me please"	
-//	Artifactory.addInteractivePromotion server: server, promotionConfig: promotionConfig, displayName: "Promote me please"
+	def addInteractivePromotionMap = [server: artfactoryServer, promotionConfig:artifactoryPromote, displayName:displayName]	
+	Artifactory.addInteractivePromotion addInteractivePromotionMap
 }
 
-def artifactoryPromote(artifactionPromotionConfig,projectBuildInfo)
+def updatePOMVersionNumber(versionNumber)
 {
-//	def artifactoryPromoteMap = new JsonSlurperClassic().parseText(artifactionPromotionConfig)
-	def promotionConfigs=[
-	"buildName":projectBuildInfo.buildName,
-	"buildNumber":projectBuildInfo.buildNumber,
-	"targetRepo":artifactionPromotionConfig.targetRepo,
-	"sourceRepo":artifactionPromotionConfig.sourceRepo,
-	"status":artifactionPromotionConfig.status,
-	"copy":artifactionPromotionConfig.copy,
-	"failFast":artifactionPromotionConfig.failFast]
-	return promotionConfigs
+	versionNumber = versionNumber.replace("-SNAPSHOT","")
+	def lastIndex = versionNumber.lastIndexOf(".")
+	def lastDigit = versionNumber.substring(lastIndex+1,versionNumber.length())
+	def versionNumberMinusLastDigit = versionNumber.substring(0,lastIndex+1)
+	try
+	{
+		def lastDigitInt = Integer.parseInt(lastDigit) +1
+		return versionNumberMinusLastDigit + lastDigitInt + "-SNAPSHOT"
+	}
+	catch(err)
+	{
+		println "error occurred"
+	}
 }
 
-def updatePOMVersionNumber(versionNumber){
-	def versionNumbArray=versionNumber.split(".")
+def retrieveVersionNumber(filename)
+{
+	//def text = new XmlSlurper().parseText(file.readToString())
+	//def version = text.project.version.text()
+	def pom = readMavenPom file:filename
+	def version = pom.version
+	version = version.replace("-SNAPSHOT","")
+	return version
+}
 
-	def versionNumberNew = versionNumbArray[0] + "." + versionNumbArray[1] + "." + (versionNumbArray[2] + 1) 
-	
-	return versionNumber
+def retrieveConfigFile(filename)
+{
+	//def project = build.getProject()
+	//def workspace=project.getWorkspace()
+	//def file = workspace.child(filename)
+	//return file
+}
+
+def isSNAPSHOT(versionNumber)
+{
+	def isSnapshot = "yes"
+	def index = versionNumber.versionNumber.lastIndexOf("SNAPSHOT")
+	if(index==-1)
+	{
+		isSnapshot="no"
+	}
+	return isSnapshot
+}
+def isEXIST(searchString,searchValue)
+{
+	def isExist="yes"
+	def index = searchString.indexOf(searchValue)
+	if(index!=-1)
+	{
+		isExist="no"
+	}
+	return isExist
 }
 

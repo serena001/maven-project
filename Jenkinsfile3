@@ -43,6 +43,14 @@ pipeline{
 				}
 			}
 		}
+		stage('Check branch')
+		{
+			when
+			{
+				branch 'mavenProjectReleaseV1'
+			}
+			
+		}
 		stage('input for releasing build')
 		{
 			steps{

@@ -1,0 +1,120 @@
+@Library('deployment2') _
+
+def archiveArtifactConfig;
+def cacertsJks="-Djavax.net.ssl.trustStore=/u01/certs/custom_caerts.jks"
+
+pipeline{
+	agent any
+	tools
+	{
+		maven 'maven'		
+	}
+	triggers
+	{
+		cron('H */4 * * 1-5')
+	}
+	options
+	{
+		disableConcurrentBuilds()
+	}
+	stages
+	{
+		stage('Setup Configuration parameters to be used by the pipeline')
+		{
+			steps
+			{
+				script
+				{
+					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
+					archiveArtifactConfig=deploymentConfig.archiveArtifact
+					emailConfig=deploymentConfig.email
+				}
+			}
+		}
+
+		stage('Checkout Configuration')
+		{
+			steps
+			{
+				script
+				{
+					withCredentials([usernamePassword(credentialsId: 'githubID', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) 
+					{
+						sh 'git init'
+						//Change the remote origin
+						sh 'git config remote set-url origin url:https://github.com/serena001/angular-ang.git					
+						sh 'git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*"
+						sh 'git fetch origin'
+						//Switch to the master branch
+						sh 'git checkout -f master'
+						//Clean the tree
+						sh 'git clean -fdx'
+						//Merge the changes
+						sh 'git pull'
+					}
+				}
+			}
+		}
+		stage('Build, Compile and Package maven Project')
+		{
+			steps
+			{
+				script
+				{
+					sh "mvn $cacertsJks clean package"
+				}
+			}
+		}
+		stage('Deployment')
+		{
+			steps
+			{
+				script
+				{	
+					def profiles=
+					def deploymentName=
+					def deployTarget=
+					def deploySource=
+					sh "mvn ${cacertsJks} clean package --activate-profiles ${profiles} --define wl.deploy.name=${deploymentName} --define wl.deploy.targets=${deployTarget} --define wl.deploy.source=${deploySource}"				
+				}
+			}
+		}	
+	}
+	post{
+		aborted
+		{
+			//echo "Process was aborted"
+			script{
+				echo "Process was aborted"
+				//deployment2.sendEmail(emailConfig)
+			}
+			
+		}
+		success{
+			//echo "Process is successful"
+			script{
+				echo "Process is successful"
+				//deployment2.sendEmail(emailConfig)
+				deployment2.archiveArtifact(archiveConfig)
+			}
+		}
+		unstable{
+			//echo "Process is unstable"
+			script{
+				echo "Process is unstable"
+				//deployment2.sendEmail(emailConfig)
+			}
+		}
+		failure{
+			//echo "Process failed"
+			script{
+				echo "Process failed11"
+				//Send failure email using template
+				//deployment2.sendEmail(emailConfig)
+			}
+		}
+		
+	}
+
+}
+	
