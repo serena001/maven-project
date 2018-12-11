@@ -1,7 +1,5 @@
 #!/usr/bin/env groovy
 
-import groovy.json.JsonSlurperClassic
-
 def artifactoryDeployResolveConfig(artfactoryServer,artifactoryDeployMap,mavenBuild)
 {
 	env.MAVEN_HOME = "${tool 'maven'}"
