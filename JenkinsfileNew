@@ -1,4 +1,4 @@
-@Library('deployment2') _
+//@Library('deployment2') _
 
 def artifactoryPromotionMap;
 def artifactoryServerConfig;
@@ -42,7 +42,7 @@ pipeline{
 				script
 				{
 					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
-					deployment=load("vars/deployment.groovy")
+					deployment2=load("vars/deployment.groovy")
 					artifactoryPromotionMap=deploymentConfig.artifactoryPromotion
 					artifactoryServerConfig=deploymentConfig.artifactoryDeploy
 					archiveArtifactConfig=deploymentConfig.archiveArtifact
