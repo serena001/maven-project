@@ -1,5 +1,3 @@
-@Library('deployment2') _
-
 def artifactoryPromotionMap;
 def artifactoryServerConfig;
 def archiveArtifactConfig;
@@ -42,7 +40,7 @@ pipeline{
 				script
 				{
 					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
-					deployment=load("vars/deployment.groovy")
+					deployment2=load("vars/deployment.groovy")
 					artifactoryPromotionMap=deploymentConfig.artifactoryPromotion
 					artifactoryServerConfig=deploymentConfig.artifactoryDeploy
 					archiveArtifactConfig=deploymentConfig.archiveArtifact
@@ -166,13 +164,15 @@ pipeline{
 						def password=env.PASSWORD
 						def branchName=env.BRANCH_NAME
 						def commitMsg="Promoted the build from the staging repository to the release repository"				
-						sh 'git add pom.xml'
-						sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
-						sh 'git config --global push.default simple'
+						bat 'git add pom.xml'
+						bat 'git commit -m "Promoted the build from the staging repository to the release repository"'
+						bat 'git config --global push.default simple'
 						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/head/${branchName}'
 						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}'
-						sh 'git push --tags https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}'
+						//sh 'git push --tags https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}'
 						//sh 'git push https:// : HEAD:refs/heads/testing'
+						bat 'git tag -a v${versionNumber} -m "${versionNumber}"'
+						bat 'git push --tags'
 					}
 				}
 			}
