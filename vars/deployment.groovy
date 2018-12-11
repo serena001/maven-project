@@ -73,4 +73,4 @@ def updatePOMVersionNumber(versionNumber){
 	def versionNumberNew = versionNumberArry[0] + "." + versionNumberArry[1] + "." + (versionNumberArry[2] + 1) + "-" + verionNumberArry[3]
 	return versionNumber
 }
-
+return this;

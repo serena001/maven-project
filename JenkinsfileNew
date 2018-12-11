@@ -14,7 +14,9 @@ def versionNumber;
 def emailConfig;
 def projectConfig;
 def isSNAPSHOT;
+def isMASTER;
 def isRELEASE;
+def mavenDescriptor
 
 pipeline{
 	agent any
@@ -38,22 +40,18 @@ pipeline{
 			{
 				script
 				{
-					archiveConfig = readFile(file:"src/main/resources/archiveConfig.json")
-					artifactoryPublishConfig=readFile(file:"src/main/resources/artifactoryPublishConfig.json")
-					emailConfig=readFile(file:"src/main/resources/emailConfig.json")
-					//artifactoryPromoteConfig=readFile(file:"src/main/resources/artifactoryPromotionConfig.json")
-					
 					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
 					artifactoryPromotionMap=deploymentConfig.artifactoryPromotion
 					artifactoryServerConfig=deploymentConfig.artifactoryDeploy
 					archiveArtifactConfig=deploymentConfig.archiveArtifact
 					emailConfig=deploymentConfig.email
+					projectConfig=deploymentConfig.project
 					
-					//create artifactor instance
+					//create artifactory instance
 					artfactoryServer=deployment.createArtifactoryInstance()
 					//create mavenBuild Instance
 					mavenBuild=deployment.createMavenBuildInstance()
-					isSNAPSHOT="no"
+					isMASTER="no"
 				}
 			}
 		}
@@ -61,18 +59,11 @@ pipeline{
 		{
 			when
 			{
-			//env.BRANCH_NAME!="master"
-			//Check the branch name and then check the version from the pom.xml if it exists
-			//if(env.BRANCH_NAME does not contain release)
-			//set a variable in the deploymentConfig.json file for the naming convention
-			//open the pom.xml and then check for version 
-			//not{
-			//	branch 'master'}	
-			branch 'testing'			
+				branch 'master'			
 			}
 			steps{
 				script{
-					isSNAPSHOT="yes"
+					isMASTER="yes"
 				}
 			}
 		}
@@ -80,24 +71,45 @@ pipeline{
 		{
 			when
 			{
-				expression{isSNAPSHOT=="no"}
+				branch '*release*'
 			}
 			steps
 			{
 				script
 				{
-					searchValue=projectConfig.releaseSearchValue
-					searchString=env.BRANCH_NAME
-					isRELEASE=deployment.isEXIST(searchString,searchValue)
+				/**	mavenDescriptor = Artifactory.mavenDescriptor()
+					echo "${mavenDescriptor}"
+					if(!mavenDescriptor)
+					{
+						def filename=projectConfig.configFilename
+						versionNumber=deployment.retrieveVersionNumber(filename)
+						isRELEASE="yes"
+					}
+					else
+					{
+						error("Release dependency was detected")
+					}**/
 					def filename=projectConfig.configFilename
 					versionNumber=deployment.retrieveVersionNumber(filename)
+					try
+            			{		                
+		                def descriptor =Artifactory.mavenDescriptor()
+		                descriptor.version=versionNumber
+		                descriptor.failOnSnapshot=true
+		                descriptor.transform()
+		                isRELEASE="yes"
+            			}
+            			catch(err)
+            			{
+                			error("snapshot dependency found")
+            			}
 				}
 			}
 		}
 		stage('Publish the build to Artifactory staging repository')
 		{
 			when{
-				expression{isSNAPSHOT=="no" && isRELEASE=="yes"}
+				expression{isRELEASE=='yes'}
 			}
 			steps
 			{
@@ -106,25 +118,24 @@ pipeline{
 					//Deploy artifacts to the staging 					
 					pomFileName="pom.xml"
 					goals="clean install"
-					//versionNumber="1.1.2"
 					
 					//Change the maven descriptor from snapshot to release to create release artifacts, version number is increased by a version
 					def mavenDescriptor = Artifactory.mavenDescriptor()
 					mavenDescriptor.version = versionNumber
+					//Fail the build if it contains a snapshot dependency
+					mavenDescriptor.failOnSnapshot=true
 					mavenDescriptor.pomFile=pomFileName
-					mavenDescriptor.transform()
 					
 					mavenBuild=deployment2.artifactoryDeployResolveConfig(artfactoryServer,artifactoryServerConfig,mavenBuild)
 					projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
-					artfactoryServer.publishBuildInfo projectBuildInfo	
-					
+					artfactoryServer.publishBuildInfo projectBuildInfo						
 				}
 			}
 		}
-		stage('Update POM xml files with the new version number')
+/**		stage('Update POM xml files with the new version number')
 		{
 			when{
-				expression{isSNAPSHOT=="no" && isRELEASE=="yes"}
+				expression{isRELEASE=="yes"}
 			}
 			steps
 			{
@@ -137,28 +148,37 @@ pipeline{
 					artfactoryServer.publishBuildInfo projectBuildInfo	
 				}
 			}
-		}
-	/**	stage('Push updated pom.xml file(s) to GIT repository')
+		}**/
+	stage('Push updated pom.xml file(s) to GIT repository')
 		{
 			when{
-				expression{isSNAPSHOT=="no" && isRELEASE=="yes"}
+				expression{isRELEASE=="yes"}
 			}
 			steps
 			{
 				script
 				{
-					def commitMsg="Promoted the build from the staging repository to the release repository"				
-					sh 'git add pom.xml'
-					sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
-					sh 'git config --global push.default simple'
-					sh 'git push https:// : HEAD:refs/heads/testing'
+					withCredentials([usernamePassword(credentialsId:'userC',usernameVariable:'USERNAME',passwordVariable:'PASSWORD')])
+					{
+						def username=env.USERNAME
+						def password=env.PASSWORD
+						def branchName=env.BRANCH_NAME
+						def commitMsg="Promoted the build from the staging repository to the release repository"				
+						sh 'git add pom.xml'
+						sh 'git commit -m "Promoted the build from the staging repository to the release repository"'
+						sh 'git config --global push.default simple'
+						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/head/${branchName}'
+						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}'
+						sh 'git push --tags https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}
+						//sh 'git push https:// : HEAD:refs/heads/testing'
+					}
 				}
 			}
-		}**/
-		stage('Promote build from staging to release repository in Arifactory, Interactive')
+		}
+		stage('Promote build from staging to release repository in Arifactory, using Interactive method')
 		{
 			when{
-				expression{isSNAPSHOT=="no" && isRELEASE=="yes"}
+				expression{isRELEASE=="yes"}
 			}
 			steps
 			{
@@ -166,15 +186,19 @@ pipeline{
 				{	
 					//Promote artifacts from the staging repository to the release repository
 					def displayName="Promote"
+					mavenDescriptor.failOnSnapshot=true
+					mavenDescriptor.pomFile=pomFileName
 					artifactoryPromote=deployment2.artifactoryPromote(artifactoryPromotionMap,projectBuildInfo)
-					deployment2.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)				
+					deployment2.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)	
+					def isSnaphshot = mavenDescriptor.hasSnapshots()
+					echo "${isSnapshot}"			
 				}
 			}
 		}	
 		stage('Do not promote to release but publish to artifactory snapshot')
 		{
 			when{
-				expression{isSNAPSHOT=="yes"}
+				expression{isMASTER=="yes"}
 			}
 			steps
 			{
