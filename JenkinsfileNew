@@ -42,7 +42,7 @@ pipeline{
 				script
 				{
 					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
-					deployment2=load("vars/deployment.groovy")
+					deployment2=load("vars/deployment2.groovy")
 					artifactoryPromotionMap=deploymentConfig.artifactoryPromotion
 					artifactoryServerConfig=deploymentConfig.artifactoryDeploy
 					archiveArtifactConfig=deploymentConfig.archiveArtifact
