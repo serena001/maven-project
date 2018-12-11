@@ -50,9 +50,9 @@ pipeline{
 					projectConfig=deploymentConfig.project
 					
 					//create artifactory instance
-					artfactoryServer=deployment.createArtifactoryInstance()
+					artfactoryServer=deployment2.createArtifactoryInstance()
 					//create mavenBuild Instance
-					mavenBuild=deployment.createMavenBuildInstance()
+					mavenBuild=deployment2.createMavenBuildInstance()
 					isMASTER="no"
 				}
 			}
@@ -84,7 +84,7 @@ pipeline{
 					if(!mavenDescriptor)
 					{
 						def filename=projectConfig.configFilename
-						versionNumber=deployment.retrieveVersionNumber(filename)
+						versionNumber=deployment2.retrieveVersionNumber(filename)
 						isRELEASE="yes"
 					}
 					else
@@ -92,7 +92,7 @@ pipeline{
 						error("Release dependency was detected")
 					}**/
 					def filename=projectConfig.configFilename
-					versionNumber=deployment.retrieveVersionNumber(filename)
+					versionNumber=deployment2.retrieveVersionNumber(filename)
 					try
             			{		                
 		                 mavenDescriptor =Artifactory.mavenDescriptor()
