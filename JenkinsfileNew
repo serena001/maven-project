@@ -40,7 +40,7 @@ pipeline{
 				script
 				{
 					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
-					deployment2=load("vars/deployment.groovy")
+					deployment2=load("vars/deployment2.groovy")
 					artifactoryPromotionMap=deploymentConfig.artifactoryPromotion
 					artifactoryServerConfig=deploymentConfig.artifactoryDeploy
 					archiveArtifactConfig=deploymentConfig.archiveArtifact
@@ -82,7 +82,7 @@ pipeline{
 					if(!mavenDescriptor)
 					{
 						def filename=projectConfig.configFilename
-						versionNumber=deployment.retrieveVersionNumber(filename)
+						versionNumber=deployment2.retrieveVersionNumber(filename)
 						isRELEASE="yes"
 					}
 					else
@@ -90,7 +90,7 @@ pipeline{
 						error("Release dependency was detected")
 					}**/
 					def filename=projectConfig.configFilename
-					versionNumber=deployment.retrieveVersionNumber(filename)
+					versionNumber=deployment2.retrieveVersionNumber(filename)
 					try
             			{		                
 		                 mavenDescriptor =Artifactory.mavenDescriptor()
