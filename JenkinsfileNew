@@ -95,10 +95,10 @@ pipeline{
 					versionNumber=deployment.retrieveVersionNumber(filename)
 					try
             			{		                
-		                def descriptor =Artifactory.mavenDescriptor()
-		                descriptor.version=versionNumber
-		                descriptor.failOnSnapshot=true
-		                descriptor.transform()
+		                 mavenDescriptor =Artifactory.mavenDescriptor()
+		                mavenDescriptor.version=versionNumber
+		                mavenDescriptor.failOnSnapshot=true
+		                mavenDescriptor.transform()
 		                isRELEASE="yes"
             			}
             			catch(err)
@@ -122,7 +122,7 @@ pipeline{
 					goals="clean install"
 					
 					//Change the maven descriptor from snapshot to release to create release artifacts, version number is increased by a version
-					def mavenDescriptor = Artifactory.mavenDescriptor()
+				//	def mavenDescriptor = Artifactory.mavenDescriptor()
 					mavenDescriptor.version = versionNumber
 					//Fail the build if it contains a snapshot dependency
 					mavenDescriptor.failOnSnapshot=true
