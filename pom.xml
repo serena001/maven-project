@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>testing</groupId>
   <artifactId>testing1</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>test</name>
   <description>maven test</description>
 </project>
