@@ -151,9 +151,10 @@ pipeline{
 						def username=env.USERNAME
 						def password=env.PASSWORD
 						def branchName=env.BRANCH_NAME
+						versionNumber=deployment2.updatePOMVersionNumber(versionNumber)
 						def commitMsg="Promoted the build from the staging repository to the release repository"				
-						bat 'git add pom.xml'
-						bat 'git commit -m "Promoted the build from the staging repository to the release repository"'
+						//bat 'git add pom.xml'
+						//bat 'git commit -m "Promoted the build from the staging repository to the release repository"'
 						bat 'git config --global push.default simple'
 						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/head/${branchName}'
 						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}'
