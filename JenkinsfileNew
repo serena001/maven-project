@@ -79,18 +79,6 @@ pipeline{
 			{
 				script
 				{
-				/**	mavenDescriptor = Artifactory.mavenDescriptor()
-					echo "${mavenDescriptor}"
-					if(!mavenDescriptor)
-					{
-						def filename=projectConfig.configFilename
-						versionNumber=deployment2.retrieveVersionNumber(filename)
-						isRELEASE="yes"
-					}
-					else
-					{
-						error("Release dependency was detected")
-					}**/
 					def filename=projectConfig.configFilename
 					versionNumber=deployment2.retrieveVersionNumber(filename)
 					try
@@ -122,9 +110,7 @@ pipeline{
 					goals="clean install"
 					
 					//Change the maven descriptor from snapshot to release to create release artifacts, version number is increased by a version
-				//	def mavenDescriptor = Artifactory.mavenDescriptor()
 					mavenDescriptor.version = versionNumber
-					//Fail the build if it contains a snapshot dependency
 					mavenDescriptor.failOnSnapshot=true
 					mavenDescriptor.pomFile=pomFileName
 					
@@ -245,7 +231,7 @@ pipeline{
 			script{
 				echo "Process failed11"
 				//Send failure email using template
-				//deployment2.sendEmail(emailConfig)
+				deployment2.sendEmail(emailConfig)
 			}
 		}
 		
