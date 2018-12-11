@@ -48,9 +48,9 @@ pipeline{
 					projectConfig=deploymentConfig.project
 					
 					//create artifactory instance
-					artfactoryServer=deployment.createArtifactoryInstance()
+					artfactoryServer=deployment2.createArtifactoryInstance()
 					//create mavenBuild Instance
-					mavenBuild=deployment.createMavenBuildInstance()
+					mavenBuild=deployment2.createMavenBuildInstance()
 					isMASTER="no"
 				}
 			}
