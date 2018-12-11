@@ -73,4 +73,10 @@ def updatePOMVersionNumber(versionNumber){
 	def versionNumberNew = versionNumberArry[0] + "." + versionNumberArry[1] + "." + (versionNumberArry[2] + 1) + "-" + verionNumberArry[3]
 	return versionNumber
 }
+
+def retrieveVersionNumber(versionNumber)
+{
+	def pom = readMavenPom file:'pom.xml'
+	return pom.version
+}
 return this;
