@@ -69,7 +69,7 @@ def updatePOMVersionNumber(versionNumber)
 	try
 	{
 		def lastDigitInt = Integer.parseInt(lastDigit) +1
-		return versionNumberMinusLastDigit + lastDigitInt + "-SNAPSHOT"
+		return versionNumberMinusLastDigit + lastDigitInt 
 	}
 	catch(err)
 	{
