@@ -156,7 +156,7 @@ pipeline{
 						//bat 'git config --global push.default simple'
 						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/head/${branchName}'
 						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}'
-						sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git v${versionNumber}'
+						sh "git push https://${username}:${password}@github.com/${username}/maven-project.git v${versionNumber}"
 						//sh 'git push https:// : HEAD:refs/heads/testing'
 						//sh 'git tag -a v${versionNumber} -m "${versionNumber}"'
 						//sh 'git push --tags'
