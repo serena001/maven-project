@@ -147,7 +147,7 @@ pipeline{
 					withCredentials([usernamePassword(credentialsId:'userC',usernameVariable:'USERNAME',passwordVariable:'PASSWORD')])
 					{
 						def username=env.USERNAME
-						def password=env.PASSWORD
+						def password=env.PASSWORD 
 						def branchName=env.BRANCH_NAME
 						versionNumber=deployment2.updatePOMVersionNumber(versionNumber)
 						def commitMsg="Promoted the build from the staging repository to the release repository"				
