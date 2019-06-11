@@ -1,6 +1,9 @@
-package hello.form.Consent;
+package hello.service.dto;
 
 import static lombok.AccessLevel.PRIVATE;
+
+import java.io.Serializable;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,9 +13,10 @@ import lombok.Setter;
 
 @Builder
 @NoArgsConstructor
+@SuppressWarnings("serial")
 @AllArgsConstructor(access=PRIVATE)
 @Getter @Setter
-public class ConsentToCommun {
+public class Consent implements Serializable{
 	@Getter @Setter
 	private Integer consent;
 

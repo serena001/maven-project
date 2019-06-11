@@ -5,4 +5,120 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>test</name>
   <description>maven test</description>
+  <properties>
+  	<weblogic-adminurl>http://n300040446:7001/console</weblogic-adminurl>
+  	<weblogic-user>weblogic</weblogic-user>
+  	<weblogic-password>logicFunLemon2</weblogic-password>
+  	<weblogic-upload>true</weblogic-upload>
+  	<weblogic-action></weblogic-action>
+  	<weblogic-remote>true</weblogic-remote>
+  	<weblogic-verbose>false</weblogic-verbose>
+  	<weblogic-source></weblogic-source>
+  	<weblogic-name>application</weblogic-name>
+  	<weblogic-target>AdminServer</weblogic-target>
+  	
+  	<!-- Version numbers for the maven plugins -->
+  	<maven-assembly-plugin.version></maven-assembly-plugin.version>
+  	<wls-maven-plugin.version></wls-maven-plugin.version>
+  </properties>
+  <build>
+  	<plugins>
+  		<plugin>
+  			<artifactId>maven-assembly-plugin</artifactId>
+  			<version>3.1.0</version>  			
+  			<configuration>
+  				<descriptors>
+  					<descriptor>src/assembly/assembly.xml</descriptor>
+  				</descriptors>
+  			</configuration>
+  		</plugin>
+  		<!-- Copy the file from jenkins workspace to the weblogic staging area  -->
+  		<!-- Copy zip file to the staging area, unzip the zip file, remote the zip file -->
+  		<plugin>
+  			<groupId></groupId>
+  			<artifactId>maven-antrun-plugin</artifactId>
+  			<version>1.6</version>
+  			<executions>
+  				<execution>  
+  					<id></id>
+  					<phase></phase>
+  					<goals>
+  						<goal>run</goal>
+  					</goals>
+  					<configuration>
+  						<target>
+  							<!-- Copy the file to the weblogic staging area  -->
+  							<echo message="Deploying the project file to weblogic staging area"/>
+  							<!-- Send the zip file to the staging area on Weblogic -->
+  							<scp trust="yes" file="testing1.zip" todir="${weblogic-config-username}:${weblogic-config-password}@${weblogic-config-hostname}:/${weblogic-file-path}"/>
+  							<!-- Access the weblogic staging area where the zip file is located, delete the existing unzipped folder, unzip the folder and then remove the zip file -->
+  							<sshexec trust="yes" verbose="true" failonerror="false" host="${weblogic-config-hostname}" username="${weblogic-config-username}" 
+  							password="${weblogic-config-password}" command="rm ${project-name}; unzip ${project-name};"/>
+  						</target>
+  					</configuration>
+  				</execution>
+			</executions>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.ant</groupId>
+					<artifactId>ant-jsch</artifactId>
+					<version>1.10.5</version>
+				</dependency>
+			</dependencies>
+  		</plugin>
+  		<!-- Configure where the appliation folder is located in the weblogic staging area -->
+  		<!-- Upload the deploy the application to the weblogic webserver -->
+  		<plugin>
+  			<groupId>com.oracle.weblogic</groupId>
+  			<artifactId>weblogic-maven-plugin</artifactId>
+  			<version>3.1.0</version>
+  			<configuration>
+  				<adminurl>${weblogic-url}</adminurl>
+  				<user>${weblogic-user}</user>
+  				<password>${weblogic-password}</password>
+  				<upload>${weblogic-upload}</upload>
+  				<action>${weblogic-action}</action>
+  				<remote>${weblogic-remote}</remote>
+  				<verbose>${weblogic-verbose}</verbose>
+  				<source>${weblogic-source}</source>
+  				<target>${weblogic-target}</target>
+  				<name>${weblogic-name}</name>
+  			</configuration>
+  			<!--  
+  			<executions>
+  				<execution>
+  					<phase>install</phase>
+  					<goals>
+  						<goal>deploy</goal>
+  					</goals>
+  				</execution>
+  			</executions>-->
+  		</plugin>
+  		<plugin>
+  			<groupId>org.apache.tomcat.maven</groupId>
+  			<artifactId>tomcat7-maven-plugin</artifactId>
+  			<version>10.3.4</version>
+  			<configuration>
+  				<url>http://localhost:8080/manager</url>
+  				<server>localhost</server>
+  				<path>/${weblogic-name}</path>
+  			</configuration>
+  		</plugin>
+  	</plugins>
+  </build>
+  <!-- Profiles with specific properties that define environment properties -->
+  <profiles>
+  	<profile>
+  		<!--  <activation>
+  			<property>
+  				<name>${profile-name}</name>
+  				<value>${profile-nameValue}</value>
+  			</property>
+  		</activation>-->
+  		<id>Integration</id>
+  		<properties>
+ 			<weblogic-source></weblogic-source>
+   		</properties>
+  	</profile>
+  </profiles>
 </project>

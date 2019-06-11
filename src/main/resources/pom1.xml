@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>testing</groupId>
+  <artifactId>testing1</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>test-parent</name>
+  <description>testing1-web</description>
+  <parent>
+  
+  </parent>
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  		</dependency>
+  	</dependencies>
+  </dependencyManagement>
+	<properties>
+		<spring-boot-dependencies.version>1.5.17.RELEASE</spring-boot-dependencies.version>
+		<tomcat.version>7.0.91</tomcat.version>
+		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.build-date
+	</properties>
+</project>

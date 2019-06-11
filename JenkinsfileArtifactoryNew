@@ -1,22 +1,3 @@
-def artifactoryPromotionMap;
-def artifactoryServerConfig;
-def archiveArtifactConfig;
-
-def mavenBuild;
-def artifactoryServer;
-def projectBuildInfo;
-def goals;
-def pomFileName;
-def selectedOption;
-def versionNumber;
-def emailConfig;
-def projectConfig;
-def isSNAPSHOT;
-def isMASTER;
-def isRELEASE;
-def mavenDescriptor;
-def deployment;
-
 pipeline{
 	agent any
 	tools
@@ -37,22 +18,13 @@ pipeline{
 		{
 			steps
 			{
-				script
-				{
-					deploymentConfig=readJSON(file:"src/main/resources/deploymentConfig.json")
-					deployment2=load("vars/deployment2.groovy")
-					artifactoryPromotionMap=deploymentConfig.artifactoryPromotion
-					artifactoryServerConfig=deploymentConfig.artifactoryDeploy
-					archiveArtifactConfig=deploymentConfig.archiveArtifact
-					emailConfig=deploymentConfig.email
-					projectConfig=deploymentConfig.project
-					
-					//create artifactory instance
-					artfactoryServer=deployment2.createArtifactoryInstance()
-					//create mavenBuild Instance
-					mavenBuild=deployment2.createMavenBuildInstance()
-					isMASTER="no"
-				}
+				rtServer(
+				id="artifactory",
+				url:"http://localhost:8081/artifactory",
+				username:"admin",
+				password:"admin"
+				)
+				
 			}
 		}
 		stage('Check master branch')
@@ -101,21 +73,31 @@ pipeline{
 			}
 			steps
 			{
-				script
-				{
-					//Deploy artifacts to the staging 					
-					pomFileName="pom.xml"
-					goals="clean install"
-					
-					//Change the maven descriptor from snapshot to release to create release artifacts, version number is increased by a version
-					mavenDescriptor.version = versionNumber
-					mavenDescriptor.failOnSnapshot=true
-					mavenDescriptor.pomFile=pomFileName
-					
-					mavenBuild=deployment2.artifactoryDeployResolveConfig(artfactoryServer,artifactoryServerConfig,mavenBuild)
-					projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
-					artfactoryServer.publishBuildInfo projectBuildInfo						
-				}
+				rtMavenResolver(
+				id:"resolverId",
+				serverId:"artifactory",
+				releaseRepo:"libs-release",
+				snapshotRepo:"libs-snapshot"
+				)						
+
+				rtMavenDeployer(
+				id:"deployerId",
+				serverId:"artifactory",
+				releaseRepo:"libs-staging-local",
+				snapshotRepo:"libs-snapshot-local"	
+				)
+				
+				rtMaven(
+				tool:maven,
+				pom:"pom.xml",
+				goals:"clean install",
+				resolverId:"resolverId",
+				deployerId:"deployerId",
+				)
+				
+				rtPublishBuildInfo(
+					serverId:"artifactory"
+				)
 			}
 		}
 /**		stage('Update POM xml files with the new version number')
@@ -135,7 +117,7 @@ pipeline{
 				}
 			}
 		}**/
-	stage('Push updated pom.xml file(s) to GIT repository')
+	/**stage('Push updated pom.xml file(s) to GIT repository')
 		{
 			when{
 				expression{isRELEASE=="yes"}
@@ -147,25 +129,22 @@ pipeline{
 					withCredentials([usernamePassword(credentialsId:'userC',usernameVariable:'USERNAME',passwordVariable:'PASSWORD')])
 					{
 						def username=env.USERNAME
-						def password=env.PASSWORD 
+						def password=env.PASSWORD
 						def branchName=env.BRANCH_NAME
-						versionNumber=deployment2.updatePOMVersionNumber(versionNumber)
 						def commitMsg="Promoted the build from the staging repository to the release repository"				
-						//bat 'git add pom.xml'
-						//bat 'git commit -m "Promoted the build from the staging repository to the release repository"'
-						//bat 'git config --global push.default simple'
+						bat 'git add pom.xml'
+						bat 'git commit -m "Promoted the build from the staging repository to the release repository"'
+						bat 'git config --global push.default simple'
 						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/head/${branchName}'
 						//sh 'git push https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}'
-						sh "git tag -d v${versionNumber}"
-						sh "git tag -a v${versionNumber} -m '${versionNumber}'"
-						sh "git push https://${username}:${password}@github.com/${username}/maven-project.git v${versionNumber}"
+						//sh 'git push --tags https://${username}:${password}@github.com/${username}/maven-project.git : HEAD:refs/tags/v${versionNumber}'
 						//sh 'git push https:// : HEAD:refs/heads/testing'
-						//sh 'git tag -a v${versionNumber} -m "${versionNumber}"'
-						//sh 'git push --tags'
+						bat 'git tag -a v${versionNumber} -m "${versionNumber}"'
+						bat 'git push --tags'
 					}
 				}
 			}
-		}
+		}**/
 		stage('Promote build from staging to release repository in Arifactory, using Interactive method')
 		{
 			when{
@@ -173,17 +152,16 @@ pipeline{
 			}
 			steps
 			{
-				script
-				{	
-					//Promote artifacts from the staging repository to the release repository
-					def displayName="Promote"
-					mavenDescriptor.failOnSnapshot=true
-					mavenDescriptor.pomFile=pomFileName
-					artifactoryPromote=deployment2.artifactoryPromote(artifactoryPromotionMap,projectBuildInfo)
-					deployment2.artifactoryPromoteInteractive(artfactoryServer,artifactoryPromote,displayName)	
-					def isSnaphshot = mavenDescriptor.hasSnapshots()
-					echo "${isSnapshot}"			
-				}
+				rtAddInteractivePromotion(
+				serverId:"artifactory",
+				targetRepo:"libs-release-local",
+				sourceRepo:"libs-staging-local",
+				includeDepedencies:true,
+				failFast:true,
+				copy:true,
+				comment:"This is a promotion to artifactory",
+				status:"released"
+				)
 			}
 		}	
 		stage('Do not promote to release but publish to artifactory snapshot')
@@ -193,14 +171,28 @@ pipeline{
 			}
 			steps
 			{
-				script
-				{
-					pomFileName="pom.xml"
-					goals="clean install"
-					mavenBuild=deployment2.artifactoryDeployResolveConfig(artfactoryServer,artifactoryServerConfig,mavenBuild)
-					projectBuildInfo=deployment2.buildMaven(mavenBuild,pomFileName,goals)
-					artfactoryServer.publishBuildInfo projectBuildInfo	
-				}
+				rtMavenResolver(
+				id:"resolverId",
+				serverId:"artifactory",
+				releaseRepo:"libs-release",
+				snapshotRepo:"libs-snapshot"
+				)						
+
+				rtMavenDeployer(
+				id:"deployerId",
+				serverId:"artifactory",
+				releaseRepo:"libs-staging-local",
+				snapshotRepo:"libs-snapshot-local"	
+				)
+				
+				rtMaven(
+				tool:maven,
+				pom:"pom.xml",
+				goals:"clean install",
+				resolverId:"resolverId",
+				deployerId:"deployerId",
+				)
+				
 			}
 		}	
 	}
